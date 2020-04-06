@@ -6,7 +6,7 @@
   background-position: center;
   position: relative;
 
-  &__header { margin: 0 0 5px 0 }
+  &__header { margin: 0 0 5px 0; color: #262626 }
   &__overlay {
     position: absolute;
     top: 0;
@@ -17,6 +17,7 @@
   }
 
   &__form {
+    max-width: 450px;
     width: 80%;
     background-color: #FAFAFA;
     position: absolute;
@@ -37,6 +38,7 @@
   &__label, &__input { display: block; width: 100% }
   &__input {
     transition: .2s ease-in;
+    background-color: #FAFAFA;
     border: none;
     outline: none;
     border-bottom: 0.5px solid #AFAFAF;
@@ -66,5 +68,33 @@
       color: #3b5998;
       &:hover { background-color: #3b5998; color: white; }
     }
+  }
+  &__tab {
+    display: inline-block;
+    position: absolute;
+    cursor: pointer;
+    top: -28px;
+    left: 0; 
+    border: 1px solid #d6a542;
+    border-bottom: none;
+    border-radius: 5px;
+    border-bottom-left-radius: 0;
+    border-bottom-right-radius: 0;
+    padding: 5px 15px;
+    font-size: 0.8rem;
+    background-color: #d6a542;
+    color: white;
+    &--active { 
+      top: -25px;
+      background-color: #FAFAFA;
+      border: none;
+      color: #262626;
+      box-shadow: 2px -2px 3px 1px rgba(0,0,0,0.12);
+    }
+  }
+  &__tab2 { 
+    @extend .form-page__tab;
+    left: 74px;
+
   }
 }
