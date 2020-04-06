@@ -1,3 +1,5 @@
+@import '../../styles/mixins';
+
 .form-page {
   width: 100vw;
   height: 100vh;
@@ -95,6 +97,10 @@
   &__tab2 { 
     @extend .form-page__tab;
     left: 74px;
-
+  }
+  @include tablet {
+    &__form{
+      padding: 20px 100px;
+    }
   }
 }

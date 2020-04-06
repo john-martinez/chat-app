@@ -3,6 +3,8 @@ import './FormPage.scss';
 
 export default function FormPage(){
   const [activeTab, setActiveTab] = useState('login');
+
+  document.title = `${activeTab === 'login' ? 'LOGIN | ' : 'SIGNUP | ' } Chat App`;
   
   const onClickHandler = e => setActiveTab(e.target.dataset.value);
   return(
