@@ -2,15 +2,12 @@ import React, { useState, useEffect } from 'react';
 import * as firebase from 'firebase';
 
 export default function MainPage(props){
-  const [currentUser, setUser] = useState('');
-  let user = sessionStorage.getItem('email');
+  const [user, setUser] = useState(sessionStorage.getItem('email'));
   let auth = firebase.auth();
-
   useEffect(()=>{
-    setUser(user)
-  }, [])
-  // redirects to login page if user did not login yet
-  if (!user) props.history.push('/login'); 
+    // redirects to login page if user did not login yet
+    if (!user) props.history.push('/login'); 
+  }, [user])
 
   const signOut = () => {
     auth.signOut();
@@ -18,11 +15,15 @@ export default function MainPage(props){
     sessionStorage.removeItem('email');
   }
 
-
   return(
     <div className="main-page">
-        <h1>WELCOME {currentUser}!</h1>
-        <button onClick={signOut}>logout</button>
+      {user 
+        ? (<>
+          <h1>WELCOME {user}!</h1>
+          <button onClick={signOut}>logout</button>
+        </>)
+        : <h1>LOADING...</h1>
+      }
     </div>
   );
 }
