@@ -5,16 +5,28 @@ import App from './components/App/App';
 import * as serviceWorker from './serviceWorker';
 import * as firebase from 'firebase';
 
+const {
+  REACT_APP_API_KEY,
+  REACT_APP_AUTH_DOMAIN,
+  REACT_APP_DATABASE_URL,
+  REACT_APP_PROJECT_ID,
+  REACT_APP_STORAGE_BUCKET,
+  REACT_APP_MESSAGING_SENDER_ID,
+  REACT_APP_APP_ID,
+  REACT_APP_MEASUREMENT_ID
+} = process.env;
+
 const firebaseConfig = {
-  apiKey: "AIzaSyD5dNdKlt4dn6Nb634yBlWtPdcWnEPwznM",
-  authDomain: "chat-app-22717.firebaseapp.com",
-  databaseURL: "https://chat-app-22717.firebaseio.com",
-  projectId: "chat-app-22717",
-  storageBucket: "chat-app-22717.appspot.com",
-  messagingSenderId: "951478077758",
-  appId: "1:951478077758:web:f48ce20c649f63c80b846f",
-  measurementId: "G-PXQNQW06TJ"
+  apiKey: REACT_APP_API_KEY,
+  authDomain: REACT_APP_AUTH_DOMAIN,
+  databaseURL: REACT_APP_DATABASE_URL,
+  projectId: REACT_APP_PROJECT_ID,
+  storageBucket: REACT_APP_STORAGE_BUCKET,
+  messagingSenderId: REACT_APP_MESSAGING_SENDER_ID,
+  appId: REACT_APP_APP_ID,
+  measurementId: REACT_APP_MEASUREMENT_ID
 };
+
 firebase.initializeApp(firebaseConfig);
 
 
