@@ -2,11 +2,12 @@ import React, { useState } from 'react';
 import './FormPage.scss';
 import * as firebase from 'firebase';
 
-export default function FormPage(){
+export default function FormPage(props){
   const [activeTab, setActiveTab] = useState('login');
   const auth = firebase.auth();
 
   document.title = `${activeTab === 'login' ? 'LOGIN | ' : 'SIGNUP | ' } Chat App`;
+  if (sessionStorage.getItem('email')) props.history.push('/');
   // const db = firebase.firestore();
 
   const onSubmitHandler = e => {
@@ -18,7 +19,8 @@ export default function FormPage(){
         if (password.value.trim() === confirm.value.trim()){
           auth.createUserWithEmailAndPassword(email.value, password.value)
           .then(data=>{
-            console.log(data);
+            sessionStorage.setItem('email',data.user.email);
+            props.history.push('/')
             form.reset();
           })
           .catch(err=>console.log(err)) 
@@ -26,7 +28,8 @@ export default function FormPage(){
       } else {
         auth.signInWithEmailAndPassword(email.value, password.value)
           .then(data=>{
-            console.log(data);
+            sessionStorage.setItem('email',data.user.email);
+            props.history.push('/')
             form.reset();
           })
           .catch(err=>console.log(err)) 
