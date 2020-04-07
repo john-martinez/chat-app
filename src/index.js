@@ -17,6 +17,7 @@ const firebaseConfig = {
 };
 firebase.initializeApp(firebaseConfig);
 
+
 ReactDOM.render(
   <React.StrictMode>
     <App />

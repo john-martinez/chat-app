@@ -1,11 +1,28 @@
 import React, { useState } from 'react';
 import './FormPage.scss';
+import * as firebase from 'firebase';
 
 export default function FormPage(){
   const [activeTab, setActiveTab] = useState('login');
+  const auth = firebase.auth();
 
   document.title = `${activeTab === 'login' ? 'LOGIN | ' : 'SIGNUP | ' } Chat App`;
-  
+  // const db = firebase.firestore();
+
+
+
+  const registrationHandler = e => {
+    e.preventDefault();
+    const {email, password, confirm} = e.target;
+    if (password.value.trim().length && 
+        email.value.trim().length &&
+        password.value.trim() === confirm.value.trim()){
+      auth.createUserWithEmailAndPassword(email.value, password.value)
+      .then(data=>console.log(data))
+      .catch(err=>console.log(err))
+    } else console.log('Invalid input');
+    e.target.reset();
+  }
   const onClickHandler = e => setActiveTab(e.target.dataset.value);
   return(
     <div className="form-page">
@@ -14,7 +31,7 @@ export default function FormPage(){
       <div onClick={onClickHandler} data-value="login" className={`form-page__tab ${activeTab === 'login' ? 'form-page__tab--active ' : ''}`}>LOGIN</div>
       <div onClick={onClickHandler} data-value="signup" className={`form-page__tab2 ${activeTab === 'signup' ? 'form-page__tab--active ' : ''}`}>SIGN UP</div>
       <h2 className="form-page__header">{activeTab==='login'? 'LOGIN' : 'REGISTER'}</h2>
-        <form>
+        <form onSubmit={registrationHandler}>
           <div className="form-page__row">
             <label className="form-page__label" htmlFor="email">EMAIL</label>
             <input className="form-page__input" type="email" name="email" />
@@ -32,18 +49,14 @@ export default function FormPage(){
           :(<>
             <div className="form-page__row">
               <label className="form-page__label" htmlFor="confirm">CONFIRM PASSWORD</label>
-              <input className="form-page__input" type="password" name="confirm" />
-            </div>
-            <div className="form-page__row">
-              <label className="form-page__label" htmlFor="display-name">DISPLAY NAME</label>
-              <input className="form-page__input" type="text" name="displayName" />
+              <input className="form-page__input" autoComplete="on" type="password" name="confirm" />
             </div>
           </>)}
           <div className="form-page__row form-page__row--button">
-            <span className="form-page__button">SIGN {activeTab==='login'? `IN` : 'UP'}</span>
+            <button className="form-page__button">SIGN {activeTab==='login'? `IN` : 'UP'}</button>
           </div>
           <div className="form-page__row">
-            <span className="form-page__button form-page__button--fb"> {activeTab==='login'? `Connect` : 'Sign up'} with facebook</span>
+            <button className="form-page__button form-page__button--fb"> {activeTab==='login'? `Connect` : 'Sign up'} with facebook</button>
           </div>
         </form>
       </div>
