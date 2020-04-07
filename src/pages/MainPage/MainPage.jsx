@@ -7,7 +7,7 @@ export default function MainPage(props){
   useEffect(()=>{
     // redirects to login page if user did not login yet
     if (!user) props.history.push('/login'); 
-  }, [user])
+  }, [user, props.history])
 
   const signOut = () => {
     auth.signOut();
