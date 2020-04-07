@@ -1,20 +1,19 @@
 import React, { useState, useEffect } from 'react';
-import * as firebase from 'firebase';
+import firebase from 'firebase/app';
+import 'firebase/firebase-auth';
 
 export default function MainPage(props){
-  const [user, setUser] = useState(sessionStorage.getItem('email'));
+  const [user, setUser] = useState('');
   let auth = firebase.auth();
   useEffect(()=>{
-    // redirects to login page if user did not login yet
-    if (!user) props.history.push('/login'); 
-  }, [user, props.history])
+    // cred is empty if the user is not signed in
+    auth.onAuthStateChanged(cred=>{ 
+      if (cred) setUser(cred.email)
+      else props.history.push('/login')
+    })
+  }, [user, auth, props.history])
 
-  const signOut = () => {
-    auth.signOut();
-    setUser('');
-    sessionStorage.removeItem('email');
-  }
-
+  const signOut = () => auth.signOut()
   return(
     <div className="main-page">
       {user 

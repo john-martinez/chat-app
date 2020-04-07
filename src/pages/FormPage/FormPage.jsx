@@ -8,29 +8,23 @@ export default function FormPage(props){
 
   document.title = `${activeTab === 'login' ? 'LOGIN | ' : 'SIGNUP | ' } Chat App`;
   if (sessionStorage.getItem('email')) props.history.push('/');
-  // const db = firebase.firestore();
 
   const onSubmitHandler = e => {
     e.preventDefault();
     const {email, password, confirm} = e.target;
-    const form = e.target;
     if (password.value.trim().length && email.value.trim().length){
       if (activeTab === 'signup'){
         if (password.value.trim() === confirm.value.trim()){
           auth.createUserWithEmailAndPassword(email.value, password.value)
           .then(data=>{
-            sessionStorage.setItem('email',data.user.email);
             props.history.push('/')
-            form.reset();
           })
           .catch(err=>console.log(err)) 
         } else console.log('Invalid input')
       } else {
         auth.signInWithEmailAndPassword(email.value, password.value)
           .then(data=>{
-            sessionStorage.setItem('email',data.user.email);
             props.history.push('/')
-            form.reset();
           })
           .catch(err=>console.log(err)) 
       }
