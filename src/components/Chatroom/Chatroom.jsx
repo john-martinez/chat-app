@@ -10,7 +10,7 @@ export default function Chatroom({messages, testDataFlow, channel, displayChanne
         {
           messages && 
           messages.map((val,i) => (
-          <div key={i}>
+          <div className="chat-room__message" key={i}>
             {val[1].sender.split('@')[0] + ': '+val[1].message}
           </div>
           ))
