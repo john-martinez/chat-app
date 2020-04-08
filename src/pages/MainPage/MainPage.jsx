@@ -55,7 +55,8 @@ export default function MainPage(props){
     let test = Object.entries(channelsList).find(val => val[1].name === currentChannel);
     let messageObj = {
       message: message.value, 
-      sender: user
+      sender: user,
+      timestamp: Date.now()
     }
     console.log(messageObj);
     firebase.database().ref('channels/' + test[0]).child('messages').push(
@@ -86,17 +87,17 @@ export default function MainPage(props){
           </div>) : <></>}
           {visible ? (<div className="main-page__modal">
           <form onSubmit={createRoom}>
-          <div className="form-page__row">
-            <label className="form-page__label" htmlFor="text">Channel Name</label>
-            <input className="form-page__input" type="text" name="text" />
-          </div>
-          <div className="form-page__row">
-            <label className="form-page__label" htmlFor="password">Password (Optional)</label>
-            <input className="form-page__input" autoComplete="on" type="password" name="password" />
-          </div>
-          <div className="form-page__row form-page__row--button">
-            <button className="form-page__button">CREATE</button>
-          </div>
+            <div className="form-page__row">
+              <label className="form-page__label" htmlFor="text">Channel Name</label>
+              <input className="form-page__input" type="text" name="text" />
+            </div>
+            <div className="form-page__row">
+              <label className="form-page__label" htmlFor="password">Password (Optional)</label>
+              <input className="form-page__input" autoComplete="on" type="password" name="password" />
+            </div>
+            <div className="form-page__row form-page__row--button">
+              <button className="form-page__button">CREATE</button>
+            </div>
           </form>
           </div>)
           :<></>}
