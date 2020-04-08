@@ -5,15 +5,10 @@ import * as firebase from 'firebase';
 export default function FormPage(props){
   const [activeTab, setActiveTab] = useState('login');
   const auth = firebase.auth();
-  const gitProvider = new firebase.auth.GithubAuthProvider();
-  const fbProvider = new firebase.auth.FacebookAuthProvider();
-  const googProvider = new firebase.auth.GoogleAuthProvider();
+
   document.title = `${activeTab === 'login' ? 'LOGIN | ' : 'SIGNUP | ' } Chat App`;
   if (sessionStorage.getItem('email')) props.history.push('/');
-  // const db = firebase.firestore();
-  fbProvider.addScope('email');
-  gitProvider.addScope('user');
-  googProvider.addScope('https://www.googleapis.com/auth/admin.directory.customer.readonly');
+
   const onSubmitHandler = e => {
     e.preventDefault();
     const {email, password, confirm} = e.target;
@@ -36,13 +31,6 @@ export default function FormPage(props){
     } else console.log('Invalid input');
   }
   const onClickHandler = e => setActiveTab(e.target.dataset.value);
-
-  const onGitHubHandler = e => auth.signInWithPopup(gitProvider).then(data=>props.history.push('/')).catch(err=>console.log(err));
-
-  const onFaceBookHandler = e => auth.signInWithPopup(fbProvider).then(data=>props.history.push('/')).catch(err=>console.log(err));
-  
-  const onGoogleHandler = e => auth.signInWithPopup(googProvider).then(data=>props.history.push('/')).catch(err=>console.log(err));
-
   return(
     <div className="form-page">
       <div className="form-page__overlay"></div>
@@ -74,16 +62,10 @@ export default function FormPage(props){
           <div className="form-page__row form-page__row--button">
             <button className="form-page__button">SIGN {activeTab==='login'? `IN` : 'UP'}</button>
           </div>
+          <div className="form-page__row">
+            <button className="form-page__button form-page__button--fb"> {activeTab==='login'? `Connect` : 'Sign up'} with facebook</button>
+          </div>
         </form>
-        {activeTab === 'login' ? (<div className="form-page__row">
-            <button onClick={onGitHubHandler} className="form-page__button form-page__button--gh" name="git">Connect with Github</button>
-          </div>) : <></>}
-        {activeTab === 'login' ? (<div className="form-page__row">
-            <button onClick={onFaceBookHandler} className="form-page__button form-page__button--fb" name="face">Connect with Facebook</button>
-          </div>) : <></>}
-          {activeTab === 'login' ? (<div className="form-page__row">
-            <button onClick={onGoogleHandler} className="form-page__button form-page__button--go" name="face">Connect with Google</button>
-          </div>) : <></>}
       </div>
     </div>
   );
