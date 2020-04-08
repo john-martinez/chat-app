@@ -54,7 +54,7 @@ export default function MainPage(props){
 
   }
   const enterRoom = (e)=> {
-    setcurrentChannel(e.target.textContent);
+    setcurrentChannel(e.target.textContent.split("#")[1]);
   }
   const visibility = () => setVisible(!visible);
   const signOut = () => auth.signOut()
@@ -80,7 +80,7 @@ export default function MainPage(props){
     }
 
     firebase.database().ref('channels/' + test[0]).child('messages').push(messageObj);
-    firebase.database().ref('channels/' + test[0]).child('messages').on('value', snap=> {
+    firebase.database().ref('channels/' + test[0]).child('messages').once('value', snap=> {
       let messageHistory = Object.entries(snap.val());
       setMessageList(messageHistory);
     })
@@ -102,7 +102,7 @@ export default function MainPage(props){
           </div>
           <div className="main-page__channel-drawer-body">
             <span className="">Channels</span>
-            {channelsList && Object.values(channelsList).map((val,i)=><span className="main-page__channel-drawer-item" onClick={enterRoom} key={i} >{val.name}</span>)}
+            {channelsList && Object.values(channelsList).map((val,i)=><span className="main-page__channel-drawer-item" onClick={enterRoom} key={i} >{'#'+val.name}</span>)}
           </div>
         </div>
           {/* <h1 className="main-page__heading">WELCOME {user}!</h1>
