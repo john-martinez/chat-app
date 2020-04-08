@@ -56,6 +56,7 @@ export default function MainPage(props){
   }
   const enterRoom = (e)=> {
     channelsDrawer.current.classList.remove('main-page__channel-drawer--visible');
+    channelsDrawerHeader.current.classList.remove('main-page__channel-drawer-header--visible');
     setcurrentChannel(e.target.textContent.split("#")[1]);
   }
   const visibility = () => setVisible(!visible);
