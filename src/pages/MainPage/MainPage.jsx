@@ -9,29 +9,42 @@ export default function MainPage(props){
   const [user, setUser] = useState('');
   const [channelsList, setChannelsList] = useState(null);
   const [visible, setVisible] = useState(false);
-  const [currentChannel, setcurrentChannel] = useState(null);
+  const [currentChannel, setcurrentChannel] = useState('General');
   const [messageList, setMessageList] = useState(null);
   let auth = firebase.auth();
   let channels = firebase.database().ref().child('channels');
 
   function onAuthStateChange(){
         return  auth.onAuthStateChanged(cred=>{ 
-      // console.log(cred);
-      channels.once('value', snap=>{
-        // console.log(snap.val());
-        if (!channelsList) setChannelsList(snap.val()) // stopped here
-      });
-      if (cred) setUser(cred.email)
-      else props.history.push('/login')
+
+        // retrieves list of channels
+        channels.once('value', snap=>{
+         if (!channelsList) setChannelsList(snap.val()) 
+        })
+
+        // redirect when user is not signed in
+        if (cred) setUser(cred.email)
+        else props.history.push('/login')
     })
-      }
-      useEffect(()=>{
-        // cred is empty if the user is not signed in
-        const unsubscribe = onAuthStateChange();
-        return ()=>{
-          unsubscribe();
-        }
-      })
+  }
+
+  useEffect(()=>{
+    channels.once('value', snap=>{
+      let chatrooms = Object.entries(snap.val());
+      let chatroom = chatrooms.find(item=>item[1].name === currentChannel);
+      let messages = Object.entries(chatroom[1].messages);
+      console.log(messages);
+      setMessageList(messages);
+    });
+  }, [currentChannel])
+
+  useEffect(()=>{
+    const unsubscribe = onAuthStateChange();
+    return ()=>{
+      unsubscribe();
+    }
+  })
+
   const visibility = () => setVisible(!visible);
   const signOut = () => auth.signOut()
   const createRoom = (e) => {
@@ -51,21 +64,21 @@ export default function MainPage(props){
   const testDataFlow = (e)=>{
     e.preventDefault();
     const {message} = e.target;
-    console.log(message.value, currentChannel);
+    // console.log(message.value, currentChannel);
     let test = Object.entries(channelsList).find(val => val[1].name === currentChannel);
     let messageObj = {
       message: message.value, 
       sender: user,
       timestamp: Date.now()
     }
-    console.log(messageObj);
+
     firebase.database().ref('channels/' + test[0]).child('messages').push(
       messageObj
     );
     
     firebase.database().ref('channels/' + test[0]).child('messages').on('value', snap=> {
       let messageHistory = Object.entries(snap.val());
-      setMessageList(messageHistory.map(val=> val[1]));
+      setMessageList(messageHistory);
     })
     e.target.reset();
   }
@@ -82,7 +95,7 @@ export default function MainPage(props){
         {channelsList && Object.values(channelsList).map((val,i)=><button onClick={enterRoom} key={i} className="main-page__button main-page__channels">{val.name}</button>)}
           {currentChannel ? (<div className="main-page__chat-room">
             <h1>{currentChannel}</h1>
-        {messageList && messageList.map((val,i) => <div key={i}>{val.message}</div>)}
+        {messageList && messageList.map((val,i) => <div key={i}>{val[1].message}</div>)}
             <form onSubmit={testDataFlow}><input type="test" name="message"/><button>SEND</button></form>
           </div>) : <></>}
           {visible ? (<div className="main-page__modal">
