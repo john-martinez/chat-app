@@ -1,0 +1,19 @@
+.header {
+  width: 100vw;
+  position: absolute;
+  top: 0;
+  left: 0;
+  z-index: 100;
+}
+
+.navbar {
+  width: 100%;
+  height: 100%;
+  background-color: #e3b459;
+  padding: 10px;
+  display: flex;
+  
+  &__burger { cursor: pointer; flex-basis: 5% }
+  &__channel-name { flex-grow: 1; padding-left: 20px; font-weight: 600 }
+  &__right { > * { margin-left: 10px; cursor: pointer } }
+}

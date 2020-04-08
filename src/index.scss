@@ -11,7 +11,7 @@ body {
 html {
   padding: 0;
   margin: 0;
-
+  overflow: hidden;
 }
 code {
   font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
@@ -24,4 +24,9 @@ input:-webkit-autofill:focus,
 input:-webkit-autofill:active  {
   box-shadow: 0 0 0 30px white inset !important;
   -webkit-box-shadow: 0 0 0 30px white inset !important;
+}
+
+/* width */
+::-webkit-scrollbar {
+  display: none;
 }

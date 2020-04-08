@@ -1,4 +1,5 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
+import Chatroom from '../../components/Chatroom/Chatroom';
 import firebase from 'firebase/app';
 import 'firebase/firebase-auth';
 import 'firebase/firebase-database';
@@ -9,29 +10,54 @@ export default function MainPage(props){
   const [user, setUser] = useState('');
   const [channelsList, setChannelsList] = useState(null);
   const [visible, setVisible] = useState(false);
-  const [currentChannel, setcurrentChannel] = useState(null);
+  const [currentChannel, setcurrentChannel] = useState('General');
   const [messageList, setMessageList] = useState(null);
   let auth = firebase.auth();
   let channels = firebase.database().ref().child('channels');
+  let channelsDrawer = useRef();
+  let channelsDrawerHeader = useRef();
 
   function onAuthStateChange(){
         return  auth.onAuthStateChanged(cred=>{ 
-      // console.log(cred);
-      channels.once('value', snap=>{
-        // console.log(snap.val());
-        if (!channelsList) setChannelsList(snap.val()) // stopped here
-      });
-      if (cred) setUser(cred.email)
-      else props.history.push('/login')
+
+        // retrieves list of channels
+        channels.once('value', snap=>{
+          console.log("NO")
+         if (!channelsList) setChannelsList(snap.val()) 
+        })
+
+        // redirect when user is not signed in
+        if (cred) setUser(cred.email)
+        else props.history.push('/login')
     })
-      }
-      useEffect(()=>{
-        // cred is empty if the user is not signed in
-        const unsubscribe = onAuthStateChange();
-        return ()=>{
-          unsubscribe();
-        }
-      })
+  }
+
+  useEffect(()=>{
+    channels.once('value', snap=>{
+      let chatrooms = Object.entries(snap.val());
+      let chatroom = chatrooms.find(item=>item[1].name === currentChannel);
+      let messages = Object.entries(chatroom[1].messages);
+      setMessageList(messages);
+    }).then(()=>channels.off('value'));
+  }, [currentChannel])
+
+  useEffect(()=>{
+    const unsubscribe = onAuthStateChange();
+    return ()=>{
+      unsubscribe();
+    }
+  }, [])
+
+
+  const displayChannels = () => {
+    channelsDrawer.current.classList.toggle('main-page__channel-drawer--visible');
+    channelsDrawerHeader.current.classList.toggle('main-page__channel-drawer-header--visible');
+
+  }
+  const enterRoom = (e)=> {
+    channelsDrawer.current.classList.remove('main-page__channel-drawer--visible');
+    setcurrentChannel(e.target.textContent.split("#")[1]);
+  }
   const visibility = () => setVisible(!visible);
   const signOut = () => auth.signOut()
   const createRoom = (e) => {
@@ -44,47 +70,50 @@ export default function MainPage(props){
     });
     e.target.reset();
   }
-
-  const enterRoom = (e)=>{
-    setcurrentChannel(e.target.textContent);
-  }
+  
   const testDataFlow = (e)=>{
     e.preventDefault();
     const {message} = e.target;
-    console.log(message.value, currentChannel);
     let test = Object.entries(channelsList).find(val => val[1].name === currentChannel);
     let messageObj = {
       message: message.value, 
       sender: user,
       timestamp: Date.now()
     }
-    console.log(messageObj);
-    firebase.database().ref('channels/' + test[0]).child('messages').push(
-      messageObj
-    );
-    
-    firebase.database().ref('channels/' + test[0]).child('messages').on('value', snap=> {
+
+    firebase.database().ref('channels/' + test[0]).child('messages').push(messageObj);
+    firebase.database().ref('channels/' + test[0]).child('messages').once('value', snap=> {
+      console.log('85');
       let messageHistory = Object.entries(snap.val());
-      setMessageList(messageHistory.map(val=> val[1]));
+      setMessageList(messageHistory);
     })
     e.target.reset();
   }
 
-
-
-  return(
+  return(<>
     <div className="main-page">
       {user 
         ? (<>
-          <h1 className="main-page__heading">WELCOME {user}!</h1>
+        <div className="main-page__channel-drawer" ref={channelsDrawer}>
+          <div className="main-page__channel-drawer-header" ref={channelsDrawerHeader}>
+            <div className="main-page__channel-drawer-header--left">
+              <div className="placeholder-pic"></div>
+            </div>
+            <div className="main-page__channel-drawer-header--right">
+              <input className="main-page__channel-drawer-search" type="text" name="search-channels" />
+            </div>
+          </div>
+          <div className="main-page__channel-drawer-body">
+            <span className="">Channels</span>
+            {channelsList && Object.values(channelsList).map((val,i)=><span className="main-page__channel-drawer-item" onClick={enterRoom} key={i} >{'#'+val.name}</span>)}
+          </div>
+        </div>
+          {/* <h1 className="main-page__heading">WELCOME {user}!</h1>
           <button onClick={signOut} className="main-page__button">Logout</button>
-          <button onClick={visibility} className="main-page__button-create main-page__button">Create Channel</button>
-        {channelsList && Object.values(channelsList).map((val,i)=><button onClick={enterRoom} key={i} className="main-page__button main-page__channels">{val.name}</button>)}
-          {currentChannel ? (<div className="main-page__chat-room">
-            <h1>{currentChannel}</h1>
-        {messageList && messageList.map((val,i) => <div key={i}>{val.message}</div>)}
-            <form onSubmit={testDataFlow}><input type="test" name="message"/><button>SEND</button></form>
-          </div>) : <></>}
+          <button onClick={visibility} className="main-page__button-create main-page__button">Create Channel</button> */}
+          {currentChannel 
+            ? <Chatroom messages={messageList} testDataFlow={testDataFlow} channel={currentChannel} displayChannels={displayChannels}/>
+            : <></>}
           {visible ? (<div className="main-page__modal">
           <form onSubmit={createRoom}>
             <div className="form-page__row">
@@ -105,5 +134,5 @@ export default function MainPage(props){
         : <h1>LOADING...</h1>
       }
     </div>
-  );
+  </>);
 }
