@@ -1,6 +1,6 @@
 .header {
   width: 100vw;
-  position: fixed;
+  position: absolute;
   top: 0;
   left: 0;
   z-index: 100;
@@ -9,7 +9,7 @@
 .navbar {
   width: 100%;
   height: 100%;
-  background-color: #fac761;
+  background-color: #e3b459;
   padding: 10px;
   display: flex;
   

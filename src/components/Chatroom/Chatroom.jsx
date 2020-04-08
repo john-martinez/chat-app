@@ -1,9 +1,11 @@
 import React from 'react';
+import Navbar from '../Navbar/Navbar';
 import './Chatroom.scss';
 
-export default function Chatroom({messages, testDataFlow}){
+export default function Chatroom({messages, testDataFlow, channel, displayChannels}){
   return(
     <div className="chat-room">
+      <Navbar channel={channel} displayChannels={displayChannels} />
       <div className="chat-room__messages">
         {
           messages && 
