@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import Navbar from '../../components/Navbar/Navbar';
 import firebase from 'firebase/app';
 import 'firebase/firebase-auth';
 import 'firebase/firebase-database';
@@ -33,8 +34,7 @@ export default function MainPage(props){
       let chatrooms = Object.entries(snap.val());
       let chatroom = chatrooms.find(item=>item[1].name === currentChannel);
       let messages = Object.entries(chatroom[1].messages);
-      console.log(messages);
-      setMessageList(messages);
+        setMessageList(messages);
     });
   }, [currentChannel])
 
@@ -64,7 +64,6 @@ export default function MainPage(props){
   const testDataFlow = (e)=>{
     e.preventDefault();
     const {message} = e.target;
-    // console.log(message.value, currentChannel);
     let test = Object.entries(channelsList).find(val => val[1].name === currentChannel);
     let messageObj = {
       message: message.value, 
@@ -83,21 +82,27 @@ export default function MainPage(props){
     e.target.reset();
   }
 
-
-
-  return(
+  return(<>
+    <Navbar channel={currentChannel} />
     <div className="main-page">
       {user 
         ? (<>
           <h1 className="main-page__heading">WELCOME {user}!</h1>
           <button onClick={signOut} className="main-page__button">Logout</button>
           <button onClick={visibility} className="main-page__button-create main-page__button">Create Channel</button>
-        {channelsList && Object.values(channelsList).map((val,i)=><button onClick={enterRoom} key={i} className="main-page__button main-page__channels">{val.name}</button>)}
-          {currentChannel ? (<div className="main-page__chat-room">
-            <h1>{currentChannel}</h1>
-        {messageList && messageList.map((val,i) => <div key={i}>{val[1].message}</div>)}
-            <form onSubmit={testDataFlow}><input type="test" name="message"/><button>SEND</button></form>
-          </div>) : <></>}
+          {channelsList && 
+          Object.values(channelsList).map((val,i)=><button onClick={enterRoom} key={i} className="main-page__button main-page__channels">{val.name}</button>)}
+          {currentChannel 
+            ? (
+              <div className="main-page__chat-room">
+                <h1>{currentChannel}</h1>
+                {messageList && messageList.map((val,i) => <div key={i}>{val[1].message}</div>)}
+                <form onSubmit={testDataFlow}>
+                  <input type="test" name="message"/>
+                  <button>SEND</button>
+                </form>
+              </div>) 
+            : <></>}
           {visible ? (<div className="main-page__modal">
           <form onSubmit={createRoom}>
             <div className="form-page__row">
@@ -118,5 +123,5 @@ export default function MainPage(props){
         : <h1>LOADING...</h1>
       }
     </div>
-  );
+  </>);
 }
