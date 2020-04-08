@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import Navbar from '../../components/Navbar/Navbar';
+import Chatroom from '../../components/Chatroom/Chatroom';
 import firebase from 'firebase/app';
 import 'firebase/firebase-auth';
 import 'firebase/firebase-database';
@@ -87,21 +88,21 @@ export default function MainPage(props){
     <div className="main-page">
       {user 
         ? (<>
-          <h1 className="main-page__heading">WELCOME {user}!</h1>
+          {/* <h1 className="main-page__heading">WELCOME {user}!</h1>
           <button onClick={signOut} className="main-page__button">Logout</button>
-          <button onClick={visibility} className="main-page__button-create main-page__button">Create Channel</button>
-          {channelsList && 
-          Object.values(channelsList).map((val,i)=><button onClick={enterRoom} key={i} className="main-page__button main-page__channels">{val.name}</button>)}
+          <button onClick={visibility} className="main-page__button-create main-page__button">Create Channel</button> */}
+          {/* {channelsList && 
+          Object.values(channelsList).map((val,i)=><button onClick={enterRoom} key={i} className="main-page__button main-page__channels">{val.name}</button>)} */}
           {currentChannel 
-            ? (
-              <div className="main-page__chat-room">
-                <h1>{currentChannel}</h1>
-                {messageList && messageList.map((val,i) => <div key={i}>{val[1].message}</div>)}
-                <form onSubmit={testDataFlow}>
-                  <input type="test" name="message"/>
-                  <button>SEND</button>
-                </form>
-              </div>) 
+            ? <Chatroom messages={messageList}/>
+              // <div className="main-page__chat-room">
+              //   <h1>{currentChannel}</h1>
+              //   {messageList && messageList.map((val,i) => <div key={i}>{val[1].message}</div>)}
+              //   <form onSubmit={testDataFlow}>
+              //     <input type="test" name="message"/>
+              //     <button>SEND</button>
+              //   </form>
+              // </div>) 
             : <></>}
           {visible ? (<div className="main-page__modal">
           <form onSubmit={createRoom}>

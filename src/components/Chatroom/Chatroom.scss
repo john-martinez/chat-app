@@ -1,0 +1,17 @@
+.chat-room {
+  height: 100%;
+  &__input-container { 
+    display: flex; 
+    position: fixed;
+    width: 100%;
+    bottom: 0;
+    left: 0;
+    right: auto;
+  }
+  &__messages { 
+    height: 100%; 
+    margin-top: 41px; 
+    padding: 0 10px;
+  }
+  &__field { flex-grow: 1 }
+}
