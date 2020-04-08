@@ -94,7 +94,7 @@ export default function MainPage(props){
           {/* {channelsList && 
           Object.values(channelsList).map((val,i)=><button onClick={enterRoom} key={i} className="main-page__button main-page__channels">{val.name}</button>)} */}
           {currentChannel 
-            ? <Chatroom messages={messageList}/>
+            ? <Chatroom messages={messageList} testDataFlow={testDataFlow}/>
               // <div className="main-page__chat-room">
               //   <h1>{currentChannel}</h1>
               //   {messageList && messageList.map((val,i) => <div key={i}>{val[1].message}</div>)}
