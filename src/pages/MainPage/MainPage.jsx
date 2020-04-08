@@ -8,10 +8,9 @@ export default function MainPage(props){
   const [channelsList, setChannelsList] = useState('');
   let auth = firebase.auth();
   let channels = firebase.database().ref().child('channels');
-  
-  useEffect(()=>{
-    // cred is empty if the user is not signed in
-    auth.onAuthStateChanged(cred=>{ 
+
+  function onAuthStateChange(){
+        return  auth.onAuthStateChanged(cred=>{ 
       channels.on('value', snap=>{
         console.log(Object.keys(snap.val())); // stopped here
       });
@@ -19,7 +18,15 @@ export default function MainPage(props){
       if (cred) setUser(cred.email)
       else props.history.push('/login')
     })
-  }, [user, auth, props.history, channels])
+      }
+      useEffect(()=>{
+        // cred is empty if the user is not signed in
+        console.log('HAHA');
+        const unsubscribe = onAuthStateChange();
+        return ()=>{
+          unsubscribe();
+        }
+      })
 
   const signOut = () => auth.signOut()
   const createRoom = () => {
