@@ -22,6 +22,7 @@ export default function MainPage(props){
 
         // retrieves list of channels
         channels.once('value', snap=>{
+          console.log("NO")
          if (!channelsList) setChannelsList(snap.val()) 
         })
 
@@ -36,16 +37,17 @@ export default function MainPage(props){
       let chatrooms = Object.entries(snap.val());
       let chatroom = chatrooms.find(item=>item[1].name === currentChannel);
       let messages = Object.entries(chatroom[1].messages);
-        setMessageList(messages);
-    });
-  }, [currentChannel, channels])
+      console.log('haha');
+      setMessageList(messages);
+    }).then(()=>channels.off('value'));
+  }, [currentChannel])
 
   useEffect(()=>{
     const unsubscribe = onAuthStateChange();
     return ()=>{
       unsubscribe();
     }
-  })
+  }, [])
 
 
   const displayChannels = () => {
@@ -81,6 +83,7 @@ export default function MainPage(props){
 
     firebase.database().ref('channels/' + test[0]).child('messages').push(messageObj);
     firebase.database().ref('channels/' + test[0]).child('messages').once('value', snap=> {
+      console.log('85');
       let messageHistory = Object.entries(snap.val());
       setMessageList(messageHistory);
     })
