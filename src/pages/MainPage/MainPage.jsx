@@ -37,7 +37,6 @@ export default function MainPage(props){
       let chatrooms = Object.entries(snap.val());
       let chatroom = chatrooms.find(item=>item[1].name === currentChannel);
       let messages = Object.entries(chatroom[1].messages);
-      console.log('haha');
       setMessageList(messages);
     }).then(()=>channels.off('value'));
   }, [currentChannel])
@@ -56,6 +55,7 @@ export default function MainPage(props){
 
   }
   const enterRoom = (e)=> {
+    channelsDrawer.current.classList.remove('main-page__channel-drawer--visible');
     setcurrentChannel(e.target.textContent.split("#")[1]);
   }
   const visibility = () => setVisible(!visible);
