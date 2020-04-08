@@ -78,6 +78,12 @@
       color: #211F1F;
       &:hover { background-color: #211F1F; color: white; }
     }
+    &--go { 
+      background-color: unset; 
+      border: 1px solid #db4a39; 
+      color: #db4a39;
+      &:hover { background-color: #db4a39; color: white; }
+    }
   }
   &__tab {
     display: inline-block;

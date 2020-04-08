@@ -5,13 +5,21 @@ import 'firebase/firebase-auth';
 export default function MainPage(props){
   const [user, setUser] = useState('');
   let auth = firebase.auth();
-  useEffect(()=>{
-    // cred is empty if the user is not signed in
-    auth.onAuthStateChanged(cred=>{ 
-      if (cred) setUser(cred.email)
-      else props.history.push('/login')
-    })
-  }, [user, auth, props.history])
+  function onAuthStateChange(){
+        return auth.onAuthStateChanged(cred=>{ 
+          if (cred) setUser(cred.email)
+          else props.history.push('/login')
+        })  
+      }
+      useEffect(()=>{
+        // cred is empty if the user is not signed in
+        console.log('HAHA');
+        const unsubscribe = onAuthStateChange();
+        return ()=>{
+          unsubscribe();
+        }
+      })
+    
 
   const signOut = () => auth.signOut()
   return(
