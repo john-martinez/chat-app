@@ -32,6 +32,15 @@ export default function MainPage(props){
           unsubscribe();
         }
       })
+    const verificationEmail = () => {if(user) {
+    
+    console.log(auth.currentUser   ,'email');
+    // auth.currentUser.sendEmailVerification().then((res)=>{console.log(res).catch(err=>console.log(err))});
+  }
+}
+
+
+  verificationEmail();
   const visibility = () => setVisible(!visible);
   const signOut = () => auth.signOut()
   const createRoom = (e) => {
