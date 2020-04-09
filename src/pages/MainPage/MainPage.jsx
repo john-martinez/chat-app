@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import Chatroom from '../../components/Chatroom/Chatroom';
+import BurgerDrawer from '../../components/BurgerDrawer/BurgerDrawer';
 import firebase from 'firebase/app';
 import 'firebase/firebase-auth';
 import 'firebase/firebase-database';
@@ -9,13 +10,12 @@ import './MainPage.scss';
 export default function MainPage(props){
   const [user, setUser] = useState('');
   const [channelsList, setChannelsList] = useState(null);
-  const [visible, setVisible] = useState(false);
   const [currentChannel, setcurrentChannel] = useState('General');
   const [messageList, setMessageList] = useState(null);
-  let auth = firebase.auth();
-  let channels = firebase.database().ref().child('channels');
   let channelsDrawer = useRef();
   let channelsDrawerHeader = useRef();
+  let auth = firebase.auth();
+  let channels = firebase.database().ref().child('channels');
 
   function onAuthStateChange(){
         return  auth.onAuthStateChanged(cred=>{ 
@@ -50,15 +50,14 @@ export default function MainPage(props){
 
 
   const displayChannels = () => {
-    channelsDrawer.current.classList.toggle('main-page__channel-drawer--visible');
-    channelsDrawerHeader.current.classList.toggle('main-page__channel-drawer-header--visible');
-
+    channelsDrawer.current.classList.toggle('burger-drawer--visible');
+    channelsDrawerHeader.current.classList.toggle('burger-drawer__header--visible');
   }
   const enterRoom = (e)=> {
-    channelsDrawer.current.classList.remove('main-page__channel-drawer--visible');
+    channelsDrawer.current.classList.remove('burger-drawer--visible');
+    channelsDrawerHeader.current.classList.remove('burger-drawer__header--visible');
     setcurrentChannel(e.target.textContent.split("#")[1]);
   }
-  const visibility = () => setVisible(!visible);
   const signOut = () => auth.signOut()
   const createRoom = (e) => {
     const {text, password} = e.target;
@@ -94,42 +93,8 @@ export default function MainPage(props){
     <div className="main-page">
       {user 
         ? (<>
-        <div className="main-page__channel-drawer" ref={channelsDrawer}>
-          <div className="main-page__channel-drawer-header" ref={channelsDrawerHeader}>
-            <div className="main-page__channel-drawer-header--left">
-              <div className="placeholder-pic"></div>
-            </div>
-            <div className="main-page__channel-drawer-header--right">
-              <input className="main-page__channel-drawer-search" type="text" name="search-channels" />
-            </div>
-          </div>
-          <div className="main-page__channel-drawer-body">
-            <span className="">Channels</span>
-            {channelsList && Object.values(channelsList).map((val,i)=><span className="main-page__channel-drawer-item" onClick={enterRoom} key={i} >{'#'+val.name}</span>)}
-          </div>
-        </div>
-          {/* <h1 className="main-page__heading">WELCOME {user}!</h1>
-          <button onClick={signOut} className="main-page__button">Logout</button>
-          <button onClick={visibility} className="main-page__button-create main-page__button">Create Channel</button> */}
-          {currentChannel 
-            ? <Chatroom messages={messageList} testDataFlow={testDataFlow} channel={currentChannel} displayChannels={displayChannels}/>
-            : <></>}
-          {visible ? (<div className="main-page__modal">
-          <form onSubmit={createRoom}>
-            <div className="form-page__row">
-              <label className="form-page__label" htmlFor="text">Channel Name</label>
-              <input className="form-page__input" type="text" name="text" />
-            </div>
-            <div className="form-page__row">
-              <label className="form-page__label" htmlFor="password">Password (Optional)</label>
-              <input className="form-page__input" autoComplete="on" type="password" name="password" />
-            </div>
-            <div className="form-page__row form-page__row--button">
-              <button className="form-page__button">CREATE</button>
-            </div>
-          </form>
-          </div>)
-          :<></>}
+          <BurgerDrawer channelsList={channelsList} enterRoom={enterRoom} ref={{channelsDrawer, channelsDrawerHeader}} />
+          <Chatroom messages={messageList} testDataFlow={testDataFlow} channel={currentChannel} displayChannels={displayChannels}/>
         </>)
         : <h1>LOADING...</h1>
       }
