@@ -10,7 +10,6 @@ export default function FormPage(props){
   const googProvider = new firebase.auth.GoogleAuthProvider();
   document.title = `${activeTab === 'login' ? 'LOGIN | ' : 'SIGNUP | ' } Chat App`;
   if (sessionStorage.getItem('email')) props.history.push('/');
-  // const db = firebase.firestore();
   fbProvider.addScope('email');
   gitProvider.addScope('user');
   googProvider.addScope('https://www.googleapis.com/auth/admin.directory.customer.readonly');

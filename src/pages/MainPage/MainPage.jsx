@@ -1,6 +1,8 @@
 import React, { useState, useEffect, useRef } from 'react';
 import Chatroom from '../../components/Chatroom/Chatroom';
+import Modal from '../../components/Modal/Modal';
 import BurgerDrawer from '../../components/BurgerDrawer/BurgerDrawer';
+import ModalForm from '../../components/ModalForm/ModalForm';
 import firebase from 'firebase/app';
 import 'firebase/firebase-auth';
 import 'firebase/firebase-database';
@@ -12,6 +14,8 @@ export default function MainPage(props){
   const [channelsList, setChannelsList] = useState(null);
   const [currentChannel, setcurrentChannel] = useState('General');
   const [messageList, setMessageList] = useState(null);
+  const [showModal, setShowModal] = useState(false);
+  const [forceRender, setForceRender] = useState(false);
   let channelsDrawer = useRef();
   let channelsDrawerHeader = useRef();
   let auth = firebase.auth();
@@ -31,6 +35,13 @@ export default function MainPage(props){
         else props.history.push('/login')
     })
   }
+  useEffect(()=>{
+  // componentDidMount
+    const unsubscribe = onAuthStateChange();
+    return ()=>{
+      unsubscribe();
+    }
+  }, [])
 
   useEffect(()=>{
     channels.once('value', snap=>{
@@ -40,14 +51,13 @@ export default function MainPage(props){
       setMessageList(messages);
     }).then(()=>channels.off('value'));
   }, [currentChannel])
-
-  useEffect(()=>{
-    const unsubscribe = onAuthStateChange();
-    return ()=>{
-      unsubscribe();
-    }
-  }, [])
-
+  
+  useEffect(()=>{
+    // to refresh channels list upon adding a new one
+    channels.once('value', snap=>{
+      setChannelsList(snap.val());
+    })
+  }, [forceRender])
 
   const displayChannels = () => {
     channelsDrawer.current.classList.toggle('burger-drawer--visible');
@@ -58,19 +68,23 @@ export default function MainPage(props){
     channelsDrawerHeader.current.classList.remove('burger-drawer__header--visible');
     setcurrentChannel(e.target.textContent.split("#")[1]);
   }
-  const signOut = () => auth.signOut()
+  const signOut = () => auth.signOut();
   const createRoom = (e) => {
-    const {text, password} = e.target;
+    e.preventDefault();
+    const {name, password} = e.target;
     channels.push().set({
-      name: `${text.value}`,
+      name: `${name.value}`,
       password:`${password.value}`,
       users: [user],
       messages: [{message: 'Hello, welcome to the new chatroom!', sender: 'default'}]
     });
     e.target.reset();
+    setShowModal(false);
+    setForceRender(!forceRender);
   }
   
-  const testDataFlow = (e)=>{
+  const showModalForm = () => setShowModal(!showModal);
+  const testDataFlow = e=>{
     e.preventDefault();
     const {message} = e.target;
     let test = Object.entries(channelsList).find(val => val[1].name === currentChannel);
@@ -93,7 +107,8 @@ export default function MainPage(props){
     <div className="main-page">
       {user 
         ? (<>
-          <BurgerDrawer channelsList={channelsList} enterRoom={enterRoom} ref={{channelsDrawer, channelsDrawerHeader}} />
+          {showModal ? <Modal hideModal={showModalForm}><ModalForm handler={createRoom} /> </Modal> : <></>}
+          <BurgerDrawer showModal={showModalForm} channelsList={channelsList} enterRoom={enterRoom} ref={{channelsDrawer, channelsDrawerHeader}} />
           <Chatroom messages={messageList} testDataFlow={testDataFlow} channel={currentChannel} displayChannels={displayChannels}/>
         </>)
         : <h1>LOADING...</h1>
