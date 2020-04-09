@@ -15,33 +15,7 @@
         width: 100%;
         height: 100px;
     }
-    &__channel-drawer {
-      overflow: hidden;
-      background-color: #fac761;
-      transition: 0.3s ease-out;
-      height: 100%;
-      width: 0vw;
-      &--visible { width: 90vw }
-      &-search { width: 100% }
-      &-item { display: block; cursor: pointer }
-      &-header { 
-        transition: 0.3s ease-out;
-        filter: opacity(0);
-        display: flex;
-        background-color: #e3ac42;
-        padding: 20px 15px;
-        &--left { width: 25px }
-        &--right {
-          margin-left: 10px;
-          flex-grow: 1;
-        }
-        &--visible { filter: opacity(1) }
-      }
-      &-body {
-        height: 100%;
-        padding: 15px;
-      }
-    }
+    
     &__modal{
         background-color: #FAFAFA;
         position: absolute;
