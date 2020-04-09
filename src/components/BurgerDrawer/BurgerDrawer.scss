@@ -1,5 +1,4 @@
 .burger-drawer {
-
     overflow: hidden;
     background-color: #fac761;
     transition: 0.3s ease-out;
@@ -12,6 +11,13 @@
       cursor: pointer;
       padding: 3px 5px;
       &:hover { background-color: orange }
+      &-icon {
+        display: inline-block;
+        transition: 0.2s ease-out;
+        &--hidden {
+          transform: rotate(-90deg);
+        }
+      }
       &-header {
         font-size: 0.8rem;
         cursor: pointer;
@@ -20,6 +26,7 @@
           justify-content: space-between;
           align-items: center;
         }
+       
         &--icon {
           font-size: 0.9rem;
           cursor: pointer;
@@ -29,6 +36,7 @@
           width: 25px;
           height: 25px;
           border-radius: 100%;
+          
           &:hover {background-color: orange}
         }
       }
@@ -46,7 +54,13 @@
       }
       &--visible { filter: opacity(1) }
     }
+    &__channel-container {
+      transition: 0.2s ease-out;
+      overflow: hidden;
+      &--hidden { height: 0 }
+    }
     &__body {
+      overflow-y: scroll;
       height: 100%;
       padding: 15px;
     }
