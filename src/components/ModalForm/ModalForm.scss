@@ -1,0 +1,35 @@
+.modal-form{
+  text-align: center;
+
+  &__input {
+    transition: 0.3s ease-out;
+    width: 100%;
+    border: none;
+    outline: none;
+    border-bottom: 1px solid #AFAFAF;
+    text-align: center;
+    padding: 5px;
+    margin-bottom: 5px;
+    &:focus { border-bottom: 0.5px solid gray }
+  }
+
+  &__label {
+    font-size: 0.7rem;
+    color: #AFAFAF;
+  }
+
+  &__button {
+    background-color: #d6a542;
+    margin-top: 10px;
+    font-size: .9rem;
+    color: white;
+    border: none;
+    outline: none;
+    border-radius: 50px;
+    display: block;
+    width: 100%;
+    padding: 5px;
+    cursor: pointer;
+    &:hover { background-color: darken($color: #d6a542, $amount: 10%) }
+  }
+}
