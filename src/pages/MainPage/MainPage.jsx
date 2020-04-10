@@ -3,6 +3,7 @@ import Chatroom from '../../components/Chatroom/Chatroom';
 import Modal from '../../components/Modal/Modal';
 import BurgerDrawer from '../../components/BurgerDrawer/BurgerDrawer';
 import ModalForm from '../../components/ModalForm/ModalForm';
+import SearchChannels from '../../components/SearchChannels/SearchChannels';
 import firebase from 'firebase/app';
 import 'firebase/firebase-auth';
 import 'firebase/firebase-database';
@@ -113,7 +114,10 @@ export default function MainPage(props){
     <div className="main-page">
       {user 
         ? (<>
-          {showModal ? <Modal hideModal={showModalForm}><ModalForm handler={createRoom} /> </Modal> : <></>}
+          {showModal 
+            ? <Modal hideModal={showModalForm}><SearchChannels handler={createRoom} /> </Modal> 
+            // ? <Modal hideModal={showModalForm}><ModalForm handler={createRoom} /> </Modal> 
+            : <></>}
           <BurgerDrawer showModal={showModalForm} channelsList={channelsList} enterRoom={enterRoom} ref={{channelsDrawer, channelsDrawerHeader}} />
           <Chatroom messages={messageList} testDataFlow={testDataFlow} channel={currentChannel} displayChannels={displayChannels}/>
         </>)
