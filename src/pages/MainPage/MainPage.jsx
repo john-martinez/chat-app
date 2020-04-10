@@ -77,10 +77,10 @@ export default function MainPage(props){
     channelsDrawer.current.classList.toggle('burger-drawer--visible');
     channelsDrawerHeader.current.classList.toggle('burger-drawer__header--visible');
   }
-  const enterRoom = (e)=> {
+  const enterRoom = (e, channel)=> {
     channelsDrawer.current.classList.remove('burger-drawer--visible');
     channelsDrawerHeader.current.classList.remove('burger-drawer__header--visible');
-    setcurrentChannel(e.target.id);
+    setcurrentChannel(channel);
   }
   const signOut = () => auth.signOut();
   const createRoom = (e) => {
