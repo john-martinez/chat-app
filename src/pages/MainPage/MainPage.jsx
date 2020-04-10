@@ -13,10 +13,11 @@ import './MainPage.scss';
 export default function MainPage(props){
   const [user, setUser] = useState('');
   const [channelsList, setChannelsList] = useState(null);
-  const [currentChannel, setcurrentChannel] = useState('General');
+  const [currentChannel, setcurrentChannel] = useState(''); // general 
   const [messageList, setMessageList] = useState(null);
   const [showModal, setShowModal] = useState(false);
   const [forceRender, setForceRender] = useState(false);
+  const [forceRender2, setForceRender2] = useState(false);
   let channelsDrawer = useRef();
   let channelsDrawerHeader = useRef();
   let auth = firebase.auth();
@@ -27,10 +28,14 @@ export default function MainPage(props){
 
         // retrieves list of channels
         channels.once('value', snap=>{
-
+          console.log(snap.val()['-M4NiJvyfWLjTUJ3lsCK']);
           let userSpecificChannels = Object.entries(snap.val()).filter(channel=>channel[1].users.includes(cred.email) || channel[1].name === 'General');
           userSpecificChannels = Object.fromEntries(userSpecificChannels);
           if (!channelsList) setChannelsList(userSpecificChannels); 
+          if (!currentChannel) {
+            setcurrentChannel('-M4NiJvyfWLjTUJ3lsCK');
+            setMessageList(Object.entries(snap.val()['-M4NiJvyfWLjTUJ3lsCK'].messages))
+          }
         })
 
         // redirect when user is not signed in
@@ -47,15 +52,14 @@ export default function MainPage(props){
   }, [])
 
   useEffect(()=>{
+    // load messages
     if (user){
-      channels.once('value', snap=>{
-        let chatrooms = Object.entries(snap.val());
-        let chatroom = chatrooms.find(item=>item[1].name === currentChannel);
-        let messages = Object.entries(chatroom[1].messages);
-        setMessageList(messages);
+      firebase.database().ref(`channels`).child(currentChannel).once('value', snap=>{
+        setMessageList(Object.entries(snap.val().messages));
+        console.log('hehehe');
       }).then(()=>channels.off('value'));
     }
-  }, [currentChannel, user, messageList])
+  }, [forceRender2, currentChannel])
   
   useEffect(()=>{
     // to refresh channels list upon adding a new one
@@ -76,7 +80,7 @@ export default function MainPage(props){
   const enterRoom = (e)=> {
     channelsDrawer.current.classList.remove('burger-drawer--visible');
     channelsDrawerHeader.current.classList.remove('burger-drawer__header--visible');
-    setcurrentChannel(e.target.textContent.split("#")[1]);
+    setcurrentChannel(e.target.id);
   }
   const signOut = () => auth.signOut();
   const createRoom = (e) => {
@@ -94,22 +98,17 @@ export default function MainPage(props){
   }
   
   const showModalForm = () => setShowModal(!showModal);
-  const testDataFlow = e=>{
+  const sendMessage = e=>{
     e.preventDefault();
     const {message} = e.target;
-    let test = Object.entries(channelsList).find(val => val[1].name === currentChannel);
     let messageObj = {
       message: message.value, 
       sender: user,
       timestamp: Date.now()
     }
 
-    firebase.database().ref('channels/' + test[0]).child('messages').push(messageObj);
-    firebase.database().ref('channels/' + test[0]).child('messages').once('value', snap=> {
-      console.log('85');
-      let messageHistory = Object.entries(snap.val());
-      setMessageList(messageHistory);
-    })
+    firebase.database().ref('channels/' + currentChannel).child('messages').push(messageObj);
+    setForceRender2(!forceRender2);
     e.target.reset();
   }
 
@@ -122,7 +121,7 @@ export default function MainPage(props){
             ? <Modal hideModal={showModalForm}><ModalForm handler={createRoom} /> </Modal> 
             : <></>}
           <BurgerDrawer showModal={showModalForm} channelsList={channelsList} enterRoom={enterRoom} ref={{channelsDrawer, channelsDrawerHeader}} />
-          <Chatroom messages={messageList} testDataFlow={testDataFlow} channel={currentChannel} displayChannels={displayChannels}/>
+          <Chatroom messages={messageList} testDataFlow={sendMessage} channel={currentChannel} displayChannels={displayChannels}/>
         </>)
         : <h1>LOADING...</h1>
       }

@@ -11,6 +11,7 @@ const BurgerDrawer = React.forwardRef(({channelsList, enterRoom, showModal },{ch
     channelContainer.current.classList.toggle('burger-drawer__channel-container--hidden');
     channelIcon.current.classList.toggle('burger-drawer__item-icon--hidden')
   }
+  console.log(channelsList && Object.entries(channelsList));
   return(
     <div className="burger-drawer" ref={channelsDrawer}>
       <div className="burger-drawer__header" ref={channelsDrawerHeader}>
@@ -28,7 +29,7 @@ const BurgerDrawer = React.forwardRef(({channelsList, enterRoom, showModal },{ch
           <span className="burger-drawer__item-header--icon" onClick={showModal} ><FontAwesomeIcon icon={faPlus} /></span>
         </div>
         <div className="burger-drawer__channel-container" ref={channelContainer} >
-          {channelsList && Object.values(channelsList).map((val,i)=><span className="burger-drawer__item" onClick={enterRoom} key={i} >{'#'+val.name}</span>)}
+          {channelsList && Object.entries(channelsList).map((val,i)=><span className="burger-drawer__item" id={val[0]} onClick={enterRoom} key={i} >{'#'+val[1].name}</span>)}
         </div>
       </div>
     </div>
