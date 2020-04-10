@@ -18,7 +18,8 @@
     color: #AFAFAF;
   }
 
-  &__header { color: #262626 }
+  &__field-container { position: relative }
+  &__header { color: #262626; margin: 0 }
   &__button {
     background-color: #d6a542;
     margin-top: 10px;

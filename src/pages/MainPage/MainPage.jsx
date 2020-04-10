@@ -30,7 +30,6 @@ export default function MainPage(props){
 
           let userSpecificChannels = Object.entries(snap.val()).filter(channel=>channel[1].users.includes(cred.email) || channel[1].name === 'General');
           userSpecificChannels = Object.fromEntries(userSpecificChannels);
-          console.log(userSpecificChannels);
           if (!channelsList) setChannelsList(userSpecificChannels); 
         })
 
@@ -56,16 +55,20 @@ export default function MainPage(props){
         setMessageList(messages);
       }).then(()=>channels.off('value'));
     }
-  }, [currentChannel, user])
+  }, [currentChannel, user, messageList])
   
   useEffect(()=>{
     // to refresh channels list upon adding a new one
-    channels.once('value', snap=>{
-      console.log(channelsList)
-      if (!channelsList && channelsList !== null) setChannelsList(snap.val());
-    })
+    if (user){
+      channels.on('value', snap=>{
+        let userSpecificChannels = Object.entries(snap.val()).filter(channel=>channel[1].users.includes(user) || channel[1].name === 'General');
+        userSpecificChannels = Object.fromEntries(userSpecificChannels);
+        setChannelsList(userSpecificChannels); 
+      })
+    }
   }, [forceRender])
 
+  
   const displayChannels = () => {
     channelsDrawer.current.classList.toggle('burger-drawer--visible');
     channelsDrawerHeader.current.classList.toggle('burger-drawer__header--visible');
@@ -115,8 +118,8 @@ export default function MainPage(props){
       {user 
         ? (<>
           {showModal 
-            ? <Modal hideModal={showModalForm}><SearchChannels handler={createRoom} /> </Modal> 
-            // ? <Modal hideModal={showModalForm}><ModalForm handler={createRoom} /> </Modal> 
+            // ? <Modal hideModal={showModalForm}><SearchChannels handler={createRoom} /> </Modal> 
+            ? <Modal hideModal={showModalForm}><ModalForm handler={createRoom} /> </Modal> 
             : <></>}
           <BurgerDrawer showModal={showModalForm} channelsList={channelsList} enterRoom={enterRoom} ref={{channelsDrawer, channelsDrawerHeader}} />
           <Chatroom messages={messageList} testDataFlow={testDataFlow} channel={currentChannel} displayChannels={displayChannels}/>
