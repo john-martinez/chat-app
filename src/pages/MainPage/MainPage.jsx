@@ -107,7 +107,7 @@ export default function MainPage(props){
       timestamp: Date.now()
     }
 
-    firebase.database().ref('channels/' + currentChannel).child('messages').push(messageObj);
+    firebase.database().ref('channels/' + currentChannel[0]).child('messages').push(messageObj);
     setForceRender2(!forceRender2);
     e.target.reset();
   }
