@@ -26,8 +26,11 @@ export default function MainPage(props){
 
         // retrieves list of channels
         channels.once('value', snap=>{
-          console.log("NO")
-         if (!channelsList) setChannelsList(snap.val()) 
+
+          let userSpecificChannels = Object.entries(snap.val()).filter(channel=>channel[1].users.includes(cred.email) || channel[1].name === 'General');
+          userSpecificChannels = Object.fromEntries(userSpecificChannels);
+          console.log(userSpecificChannels);
+          if (!channelsList) setChannelsList(userSpecificChannels); 
         })
 
         // redirect when user is not signed in
@@ -44,18 +47,21 @@ export default function MainPage(props){
   }, [])
 
   useEffect(()=>{
-    channels.once('value', snap=>{
-      let chatrooms = Object.entries(snap.val());
-      let chatroom = chatrooms.find(item=>item[1].name === currentChannel);
-      let messages = Object.entries(chatroom[1].messages);
-      setMessageList(messages);
-    }).then(()=>channels.off('value'));
-  }, [currentChannel])
+    if (user){
+      channels.once('value', snap=>{
+        let chatrooms = Object.entries(snap.val());
+        let chatroom = chatrooms.find(item=>item[1].name === currentChannel);
+        let messages = Object.entries(chatroom[1].messages);
+        setMessageList(messages);
+      }).then(()=>channels.off('value'));
+    }
+  }, [currentChannel, user])
   
   useEffect(()=>{
     // to refresh channels list upon adding a new one
     channels.once('value', snap=>{
-      setChannelsList(snap.val());
+      console.log(channelsList)
+      if (!channelsList && channelsList !== null) setChannelsList(snap.val());
     })
   }, [forceRender])
 
