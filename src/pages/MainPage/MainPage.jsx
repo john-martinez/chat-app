@@ -96,8 +96,7 @@ export default function MainPage(props){
 
     firebase.database().ref('channels/' + test[0]).child('messages').push(messageObj);
     firebase.database().ref('channels/' + test[0]).child('messages').once('value', snap=> {
-      console.log('85');
-      let messageHistory = Object.entries(snap.val());
+    let messageHistory = Object.entries(snap.val());
       setMessageList(messageHistory);
     })
     e.target.reset();

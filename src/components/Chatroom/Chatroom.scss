@@ -1,20 +1,17 @@
 .chat-room {
+  display: flex;
+  flex-direction: column;
   position: relative;
   height: 100%;
   flex-grow: 1;
   overflow: hidden;
   &__input-container { 
     display: flex; 
-    position: absolute;
     width: 100vw;
-    bottom: 0;
-    left: 0;
-    right: auto;
   }
   &__messages { 
-    height: 100%; 
     margin-top: 41px; 
-    padding: 0 10px 75px 10px;
+    padding: 0 10px;
     overflow: scroll;
     width: 100vw;
   }

@@ -1,12 +1,18 @@
-import React from 'react';
+import React, { useEffect, useRef } from 'react';
 import Navbar from '../Navbar/Navbar';
 import './Chatroom.scss';
 
 export default function Chatroom({messages, testDataFlow, channel, displayChannels}){
+  const messagesContainer = useRef();
+  useEffect(()=>{
+    let container = messagesContainer.current.children;
+    let lastMsg = container[container.length-1];
+    if (lastMsg) lastMsg.scrollIntoView();
+  }, [messages])
   return(
     <div className="chat-room">
       <Navbar channel={channel} displayChannels={displayChannels} />
-      <div className="chat-room__messages">
+      <div className="chat-room__messages" ref={messagesContainer}>
         {
           messages && 
           messages.map((val,i) => (
