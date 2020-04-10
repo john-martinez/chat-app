@@ -28,12 +28,12 @@ export default function MainPage(props){
 
         // retrieves list of channels
         channels.once('value', snap=>{
-          console.log(snap.val()['-M4NiJvyfWLjTUJ3lsCK']);
+          console.log(snap.val()['-M4NiJvyfWLjTUJ3lsCK']); // general chat id
           let userSpecificChannels = Object.entries(snap.val()).filter(channel=>channel[1].users.includes(cred.email) || channel[1].name === 'General');
           userSpecificChannels = Object.fromEntries(userSpecificChannels);
           if (!channelsList) setChannelsList(userSpecificChannels); 
           if (!currentChannel) {
-            setcurrentChannel('-M4NiJvyfWLjTUJ3lsCK');
+            setcurrentChannel(['-M4NiJvyfWLjTUJ3lsCK', {name: 'General'}]);
             setMessageList(Object.entries(snap.val()['-M4NiJvyfWLjTUJ3lsCK'].messages))
           }
         })
@@ -54,7 +54,7 @@ export default function MainPage(props){
   useEffect(()=>{
     // load messages
     if (user){
-      firebase.database().ref(`channels`).child(currentChannel).once('value', snap=>{
+      firebase.database().ref(`channels`).child(currentChannel[0]).once('value', snap=>{
         setMessageList(Object.entries(snap.val().messages));
         console.log('hehehe');
       }).then(()=>channels.off('value'));
