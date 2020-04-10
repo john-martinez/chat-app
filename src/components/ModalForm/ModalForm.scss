@@ -13,6 +13,17 @@
     &:focus { border-bottom: 0.5px solid gray }
   }
 
+  
+  &__search {
+    position: absolute;
+    top: 5px;
+    right: 10px;
+    margin: 0;
+    font-size: 0.7rem;
+    color: blue;
+    text-decoration: underline;
+    cursor: pointer;
+  }
   &__label {
     font-size: 0.7rem;
     color: #AFAFAF;

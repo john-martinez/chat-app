@@ -16,6 +16,7 @@ export default function MainPage(props){
   const [currentChannel, setcurrentChannel] = useState(''); // general 
   const [messageList, setMessageList] = useState(null);
   const [showModal, setShowModal] = useState(false);
+  const [showSearch, setShowSearch] = useState(true);
 
   // force render hooks
   const [channelCreated, setChannelCreated] = useState(false);
@@ -24,6 +25,7 @@ export default function MainPage(props){
   const channelsDrawer = useRef();
   const channelsDrawerHeader = useRef();
   const previousMessageList = useRef();
+  const completeChannelsList = useRef();
 
   // database setup
   const auth = firebase.auth();
@@ -34,6 +36,7 @@ export default function MainPage(props){
 
         // Initialization
         channels.once('value', snap=>{
+          completeChannelsList.current = snap.val();
           let userSpecificChannels = Object.entries(snap.val()).filter(channel=>channel[1].users.includes(cred.email) || channel[1].name === 'General');
           userSpecificChannels = Object.fromEntries(userSpecificChannels);
           if (!channelsList) setChannelsList(userSpecificChannels); 
@@ -113,6 +116,7 @@ export default function MainPage(props){
     setChannelCreated(!channelCreated);
   }
   
+  const toggleSearchOrFind = () => setShowSearch(!showSearch)
   const showModalForm = () => setShowModal(!showModal);
   const sendMessage = e=>{
     e.preventDefault();
@@ -132,8 +136,9 @@ export default function MainPage(props){
       {user 
         ? (<>
           {showModal 
-            // ? <Modal hideModal={showModalForm}><SearchChannels handler={createRoom} /> </Modal> 
-            ? <Modal hideModal={showModalForm}><ModalForm handler={createRoom} /> </Modal> 
+            ? showSearch 
+              ? <Modal hideModal={showModalForm}><SearchChannels channelsList={completeChannelsList.current} user={user} handler={toggleSearchOrFind} /> </Modal> 
+              : <Modal hideModal={showModalForm}><ModalForm createRoom={createRoom} handler={toggleSearchOrFind}/> </Modal> 
             : <></>}
           <BurgerDrawer showModal={showModalForm} channelsList={channelsList} enterRoom={enterRoom} ref={{channelsDrawer, channelsDrawerHeader}} />
           <Chatroom messages={messageList} testDataFlow={sendMessage} channel={currentChannel} displayChannels={displayChannels}/>
