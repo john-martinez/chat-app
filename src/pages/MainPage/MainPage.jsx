@@ -16,28 +16,34 @@ export default function MainPage(props){
   const [currentChannel, setcurrentChannel] = useState(''); // general 
   const [messageList, setMessageList] = useState(null);
   const [showModal, setShowModal] = useState(false);
-  const [forceRender, setForceRender] = useState(false);
-  const [forceRender2, setForceRender2] = useState(false);
-  let channelsDrawer = useRef();
-  let channelsDrawerHeader = useRef();
-  let auth = firebase.auth();
-  let channels = firebase.database().ref().child('channels');
+
+  // force render hooks
+  const [channelCreated, setChannelCreated] = useState(false);
+
+  // refs
+  const channelsDrawer = useRef();
+  const channelsDrawerHeader = useRef();
+  const previousMessageList = useRef();
+
+  // database setup
+  const auth = firebase.auth();
+  const channels = firebase.database().ref().child('channels');
 
   function onAuthStateChange(){
         return  auth.onAuthStateChanged(cred=>{ 
 
-        // retrieves list of channels
+        // Initialization
         channels.once('value', snap=>{
-          console.log(snap.val()['-M4NiJvyfWLjTUJ3lsCK']); // general chat id
           let userSpecificChannels = Object.entries(snap.val()).filter(channel=>channel[1].users.includes(cred.email) || channel[1].name === 'General');
           userSpecificChannels = Object.fromEntries(userSpecificChannels);
           if (!channelsList) setChannelsList(userSpecificChannels); 
           if (!currentChannel) {
-            setcurrentChannel(['-M4NiJvyfWLjTUJ3lsCK', {name: 'General'}]);
+            setcurrentChannel(['-M4NiJvyfWLjTUJ3lsCK', {name: 'General'}]); // general chat 
             setMessageList(Object.entries(snap.val()['-M4NiJvyfWLjTUJ3lsCK'].messages))
           }
         })
 
+        
         // redirect when user is not signed in
         if (cred) setUser(cred.email)
         else props.history.push('/login')
@@ -52,14 +58,24 @@ export default function MainPage(props){
   }, [])
 
   useEffect(()=>{
-    // load messages
+    // componentDidUpdate
+    if (currentChannel){
+      firebase.database().ref(`channels/${currentChannel[0]}`).child('messages').on('value', snap=>{
+        let msgs = Object.entries(snap.val());
+        if (previousMessageList.current !== msgs.length) setMessageList(msgs);
+        previousMessageList.current = msgs.length;
+      })
+    }
+  })
+
+  useEffect(()=>{
+    // load messages when switching channels
     if (user){
       firebase.database().ref(`channels`).child(currentChannel[0]).once('value', snap=>{
         setMessageList(Object.entries(snap.val().messages));
-        console.log('hehehe');
       }).then(()=>channels.off('value'));
     }
-  }, [forceRender2, currentChannel])
+  }, [currentChannel])
   
   useEffect(()=>{
     // to refresh channels list upon adding a new one
@@ -70,7 +86,7 @@ export default function MainPage(props){
         setChannelsList(userSpecificChannels); 
       })
     }
-  }, [forceRender])
+  }, [channelCreated])
 
   
   const displayChannels = () => {
@@ -94,7 +110,7 @@ export default function MainPage(props){
     });
     e.target.reset();
     setShowModal(false);
-    setForceRender(!forceRender);
+    setChannelCreated(!channelCreated);
   }
   
   const showModalForm = () => setShowModal(!showModal);
@@ -108,7 +124,6 @@ export default function MainPage(props){
     }
 
     firebase.database().ref('channels/' + currentChannel[0]).child('messages').push(messageObj);
-    setForceRender2(!forceRender2);
     e.target.reset();
   }
 

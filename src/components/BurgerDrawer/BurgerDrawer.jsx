@@ -11,7 +11,6 @@ const BurgerDrawer = React.forwardRef(({channelsList, enterRoom, showModal },{ch
     channelContainer.current.classList.toggle('burger-drawer__channel-container--hidden');
     channelIcon.current.classList.toggle('burger-drawer__item-icon--hidden')
   }
-  console.log(channelsList && Object.entries(channelsList));
   return(
     <div className="burger-drawer" ref={channelsDrawer}>
       <div className="burger-drawer__header" ref={channelsDrawerHeader}>
