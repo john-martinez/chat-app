@@ -38,7 +38,7 @@ export default function MainPage(props){
           completeChannelsList.current = snap.val();
           let userSpecificChannels = Object.entries(snap.val()).filter(channel=> {
             let x = Object.values(channel[1].users);
-            return x.includes(cred.email) || channel[1].name === 'General'
+            return x.includes(cred.email) || channel[1].name === 'general'
           })
           userSpecificChannels = Object.fromEntries(userSpecificChannels);
           if (!channelsList) setChannelsList(userSpecificChannels); 
@@ -85,12 +85,15 @@ export default function MainPage(props){
     // to refresh channels list upon adding a new one
     if (user){
       channels.on('value', snap=>{
-        let userSpecificChannels = Object.entries(snap.val()).filter(channel=>channel[1].users.includes(user) || channel[1].name === 'General');
+        let userSpecificChannels = Object.entries(snap.val()).filter(channel=>{
+          let x = Object.values(channel[1].users);
+          return x.includes(user) || channel[1].name === 'general'
+        });
         userSpecificChannels = Object.fromEntries(userSpecificChannels);
         setChannelsList(userSpecificChannels); 
       })
     }
-  }, [channelCreated])
+  }, [channelCreated, showModal])
 
   
   const displayChannels = () => {
@@ -117,10 +120,12 @@ export default function MainPage(props){
     setChannelCreated(!channelCreated);
   }
   
-  const addUserToChannel = e => {
-    firebase.database().ref('channels/' + e.target.dataset.id).child('users').push(user);
+  const addUserToChannel = key => {
+    // console.log();
+    firebase.database().ref('channels/' + key).child('users').push(user);
     setShowModal(false);
   }
+
   const toggleSearchOrFind = () => setShowSearch(!showSearch)
   const showModalForm = () => setShowModal(!showModal);
   const sendMessage = e=>{

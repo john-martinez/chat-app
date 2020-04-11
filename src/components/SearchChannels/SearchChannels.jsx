@@ -9,16 +9,19 @@ export default function SearchChannels({channelsList, user, handler, addUserToCh
   
   const displayChannelsList = () => {
     let channels = Object.entries(channelsList);
-    console.log(channels)
-    let res = channels.filter(channel=>channel[1].name.toLowerCase().includes(searchVal.toLowerCase()) && !channel[1].users.includes(user) || channel[1].name === 'general');
+    let res = channels.filter(channel=>{
+      let x = Object.values(channel[1].users);
+      return channel[1].name !== 'general' && channel[1].name.toLowerCase().includes(searchVal.toLowerCase()) || !x.includes(user)
+     });
     res = res.map(item=>(
-    <div className="search-channels__container" data-id={item[0]} key={item[0]} onClick={addUserToChannel}>
-      <div className="search-channels__results-item">
-        {item[1].name}
-      </div>
-      <div className="search-channels__results-icon">{item[1].users.length} <FontAwesomeIcon icon={faUserFriends}/></div>
-    </div>
-    ))
+        <div className="search-channels__container" key={item[0]} onClick={()=>addUserToChannel(item[0])}>
+          <div className="search-channels__results-item" data-id="inner">
+            {item[1].name}
+          </div>
+          <div className="search-channels__results-icon" data-id="innerest">{item[1].users.length} <FontAwesomeIcon icon={faUserFriends}/></div>
+        </div>
+        )
+      )
     return res;
   }
 
