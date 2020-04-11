@@ -73,11 +73,16 @@ export default function MainPage(props){
     }
   }, [])
 
-  
-  const displayChannels = () => {
-    chatroom.current.classList.toggle('chat-room--small');
-    channelsDrawer.current.classList.toggle('burger-drawer--visible');
-    channelsDrawerHeader.current.classList.toggle('burger-drawer__header--visible');
+  const displayChannels = (hideDrawer = false) => {
+    if (!hideDrawer){
+      chatroom.current.classList.toggle('chat-room--small');
+      channelsDrawer.current.classList.toggle('burger-drawer--visible');
+      channelsDrawerHeader.current.classList.toggle('burger-drawer__header--visible');
+    } else {
+      chatroom.current.classList.remove('chat-room--small');
+      channelsDrawer.current.classList.remove('burger-drawer--visible');
+      channelsDrawerHeader.current.classList.remove('burger-drawer__header--visible');
+    }
   }
   const enterRoom = channel=> {
     chatroom.current.classList.remove('chat-room--small');

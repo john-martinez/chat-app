@@ -20,7 +20,8 @@ const Chatroom = React.forwardRef(({ user, channel, displayChannels},ref) => {
   }, [channel])
 
   useEffect(()=>{
-    if (msgs.length && prevChannel === channel){
+    
+    if (msgs.length && prevChannel.current === channel){
       messages.limitToLast(1).on('child_added', snap=>{
         if (snap.val().timestamp !== msgs[msgs.length-1].timestamp) setMsgs([...msgs, snap.val()])
       })
@@ -49,7 +50,7 @@ const Chatroom = React.forwardRef(({ user, channel, displayChannels},ref) => {
   return(
     <div className="chat-room" ref={ref}>
       <Navbar channel={channel} displayChannels={displayChannels} />
-      <div className="chat-room__messages" ref={messagesContainer}>
+      <div className="chat-room__messages" ref={messagesContainer} onClick={(e)=>displayChannels(true)}>
         {
           msgs.length && 
           msgs.map((val,i) => (
