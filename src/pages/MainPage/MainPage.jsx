@@ -75,13 +75,15 @@ export default function MainPage(props){
 
   
   const displayChannels = () => {
+    chatroom.current.classList.toggle('chat-room--small');
     channelsDrawer.current.classList.toggle('burger-drawer--visible');
     channelsDrawerHeader.current.classList.toggle('burger-drawer__header--visible');
   }
   const enterRoom = channel=> {
+    chatroom.current.classList.remove('chat-room--small');
     channelsDrawer.current.classList.remove('burger-drawer--visible');
     channelsDrawerHeader.current.classList.remove('burger-drawer__header--visible');
-    setTimeout(()=>setcurrentChannel(channel),300);
+    setcurrentChannel(channel)
   }
   const signOut = () => auth.signOut();
   const createRoom = (e) => {
@@ -104,9 +106,8 @@ export default function MainPage(props){
   }
 
   const toggleSearchOrFind = () => setShowSearch(!showSearch)
-  const showModalForm = () => {
-    setShowModal(!showModal);
-  }
+  const showModalForm = () => setShowModal(!showModal);
+  
   return(<>
     <div className="main-page">
       {user && currentChannel
@@ -117,7 +118,7 @@ export default function MainPage(props){
               : <Modal hideModal={showModalForm}><ModalForm createRoom={createRoom} handler={toggleSearchOrFind}/> </Modal> 
             : <></>}
           <BurgerDrawer showModal={showModalForm} channelsList={channelsList} enterRoom={enterRoom} ref={{channelsDrawer, channelsDrawerHeader, chatroom}} />
-          <Chatroom user={user} channel={currentChannel} displayChannels={displayChannels}/>
+          <Chatroom ref={chatroom} user={user} channel={currentChannel} displayChannels={displayChannels}/>
         </>)
         : <h1>LOADING...</h1>
       }

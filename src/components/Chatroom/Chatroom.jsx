@@ -4,7 +4,7 @@ import firebase from 'firebase/app';
 import 'firebase/firebase-database';
 import './Chatroom.scss';
 
-export default function Chatroom({ user, channel, displayChannels}){
+const Chatroom = React.forwardRef(({ user, channel, displayChannels},ref) => {
   const messagesContainer = useRef();
   const prevChannel = useRef();
   const [msgs, setMsgs] = useState([]);
@@ -47,7 +47,7 @@ export default function Chatroom({ user, channel, displayChannels}){
   }
 
   return(
-    <div className="chat-room chat-room--fixed">
+    <div className="chat-room" ref={ref}>
       <Navbar channel={channel} displayChannels={displayChannels} />
       <div className="chat-room__messages" ref={messagesContainer}>
         {
@@ -66,4 +66,6 @@ export default function Chatroom({ user, channel, displayChannels}){
       </form>
     </div>
   );
-};
+});
+
+export default Chatroom;
