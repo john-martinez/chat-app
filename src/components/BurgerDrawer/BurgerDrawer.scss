@@ -4,6 +4,7 @@
     transition: 0.3s ease-out;
     height: 100%;
     width: 0vw;
+    display: inline-block;
     &--visible { width: 80vw }
     &__search { width: 100% }
     &__item { 

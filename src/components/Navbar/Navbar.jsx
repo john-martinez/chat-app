@@ -7,11 +7,11 @@ export default function Navbar({displayChannels, channel}) {
   return (
     <header className="header">
       <nav className="navbar">
-        <div className="navbar__burger" onClick={displayChannels}>
+        <div className="navbar__burger" onClick={()=>displayChannels()}>
           <FontAwesomeIcon icon={faBars} />
         </div>
         <div className="navbar__channel-name">
-          #{channel && channel[1].name}
+          #{channel.length && channel[1].name}
         </div>
         <div className="navbar__right">
           <FontAwesomeIcon icon={faSearch} />

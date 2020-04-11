@@ -14,7 +14,6 @@ export default function MainPage(props){
   const [user, setUser] = useState('');
   const [channelsList, setChannelsList] = useState(null);
   const [currentChannel, setcurrentChannel] = useState('');  
-  const [messageList, setMessageList] = useState(null);
   const [showModal, setShowModal] = useState(false);
   const [showSearch, setShowSearch] = useState(true);
 
@@ -23,13 +22,29 @@ export default function MainPage(props){
 
   // refs
   const channelsDrawer = useRef();
+  const chatroom = useRef();
   const channelsDrawerHeader = useRef();
-  const previousMessageList = useRef();
   const completeChannelsList = useRef();
 
   // database setup
   const auth = firebase.auth();
   const channels = firebase.database().ref().child('channels');
+
+  
+  useEffect(()=>{ channels.on('value', snap=> completeChannelsList.current = snap.val())})  
+  useEffect(()=>{
+    // to refresh channels list upon adding a new one
+    if (user){
+      channels.on('value', snap=>{
+        let userSpecificChannels = Object.entries(snap.val()).filter(channel=>{
+          let x = Object.values(channel[1].users);
+          return x.includes(user) || channel[1].name === 'general'
+        });
+        userSpecificChannels = Object.fromEntries(userSpecificChannels);
+        setChannelsList(userSpecificChannels); 
+      })
+    }
+  }, [channelCreated, showModal])
 
   function onAuthStateChange(){
         return  auth.onAuthStateChanged(cred=>{ 
@@ -42,10 +57,7 @@ export default function MainPage(props){
           })
           userSpecificChannels = Object.fromEntries(userSpecificChannels);
           if (!channelsList) setChannelsList(userSpecificChannels); 
-          if (!currentChannel) {
-            setcurrentChannel(['0', {name: 'general'}]); // general chat 
-            setMessageList(Object.entries(snap.val()['0'].messages))
-          }
+          if (!currentChannel) setcurrentChannel(['0', {name: 'general'}]);
         })
 
         // redirect when user is not signed in
@@ -61,55 +73,22 @@ export default function MainPage(props){
     }
   }, [])
 
-  useEffect(()=>{
-    // componentDidUpdate
-
-    // need to revise this into child_added later on
-    if (currentChannel){
-      firebase.database().ref(`channels/${currentChannel[0]}`).child('messages').on('value', snap=>{
-        let msgs = Object.entries(snap.val());
-        if (previousMessageList.current !== msgs.length) setMessageList(msgs);
-        previousMessageList.current = msgs.length;
-      })
+  const displayChannels = (hideDrawer = false) => {
+    if (!hideDrawer){
+      chatroom.current.classList.toggle('chat-room--small');
+      channelsDrawer.current.classList.toggle('burger-drawer--visible');
+      channelsDrawerHeader.current.classList.toggle('burger-drawer__header--visible');
+    } else {
+      chatroom.current.classList.remove('chat-room--small');
+      channelsDrawer.current.classList.remove('burger-drawer--visible');
+      channelsDrawerHeader.current.classList.remove('burger-drawer__header--visible');
     }
-    firebase.database().ref().child('channels').on('value', snap=>{
-      // if (completeChannelsList.current && Object.entries(completeChannelsList.current).length !== Object.entries(snap.val()).length)
-        completeChannelsList.current = snap.val();
-    })
-  })
-
-  useEffect(()=>{
-    // load messages when switching channels
-    if (user){
-      firebase.database().ref(`channels`).child(currentChannel[0]).once('value', snap=>{
-        setMessageList(Object.entries(snap.val().messages));
-      }).then(()=>channels.off('value'));
-    }
-  }, [currentChannel])
-  
-  useEffect(()=>{
-    // to refresh channels list upon adding a new one
-    if (user){
-      channels.on('value', snap=>{
-        let userSpecificChannels = Object.entries(snap.val()).filter(channel=>{
-          let x = Object.values(channel[1].users);
-          return x.includes(user) || channel[1].name === 'general'
-        });
-        userSpecificChannels = Object.fromEntries(userSpecificChannels);
-        setChannelsList(userSpecificChannels); 
-      })
-    }
-  }, [channelCreated, showModal])
-
-  
-  const displayChannels = () => {
-    channelsDrawer.current.classList.toggle('burger-drawer--visible');
-    channelsDrawerHeader.current.classList.toggle('burger-drawer__header--visible');
   }
-  const enterRoom = (e, channel)=> {
+  const enterRoom = channel=> {
+    chatroom.current.classList.remove('chat-room--small');
     channelsDrawer.current.classList.remove('burger-drawer--visible');
     channelsDrawerHeader.current.classList.remove('burger-drawer__header--visible');
-    setcurrentChannel(channel);
+    setcurrentChannel(channel)
   }
   const signOut = () => auth.signOut();
   const createRoom = (e) => {
@@ -127,37 +106,24 @@ export default function MainPage(props){
   }
   
   const addUserToChannel = key => {
-    // console.log();
     firebase.database().ref('channels/' + key).child('users').push(user);
     setShowModal(false);
   }
 
   const toggleSearchOrFind = () => setShowSearch(!showSearch)
   const showModalForm = () => setShowModal(!showModal);
-  const sendMessage = e=>{
-    e.preventDefault();
-    const {message} = e.target;
-    let messageObj = {
-      message: message.value, 
-      sender: user,
-      timestamp: Date.now()
-    }
-
-    firebase.database().ref('channels/' + currentChannel[0]).child('messages').push(messageObj);
-    e.target.reset();
-  }
-
+  
   return(<>
     <div className="main-page">
-      {user 
+      {user && currentChannel
         ? (<>
           {showModal 
             ? showSearch 
               ? <Modal hideModal={showModalForm}><SearchChannels channelsList={completeChannelsList.current} user={user} handler={toggleSearchOrFind} addUserToChannel={addUserToChannel} /> </Modal> 
               : <Modal hideModal={showModalForm}><ModalForm createRoom={createRoom} handler={toggleSearchOrFind}/> </Modal> 
             : <></>}
-          <BurgerDrawer showModal={showModalForm} channelsList={channelsList} enterRoom={enterRoom} ref={{channelsDrawer, channelsDrawerHeader}} />
-          <Chatroom messages={messageList} testDataFlow={sendMessage} channel={currentChannel} displayChannels={displayChannels}/>
+          <BurgerDrawer showModal={showModalForm} channelsList={channelsList} enterRoom={enterRoom} ref={{channelsDrawer, channelsDrawerHeader, chatroom}} />
+          <Chatroom ref={chatroom} user={user} channel={currentChannel} displayChannels={displayChannels}/>
         </>)
         : <h1>LOADING...</h1>
       }
