@@ -18,7 +18,7 @@ export default function SearchChannels({channelsList, user, handler, addUserToCh
           <div className="search-channels__results-item" data-id="inner">
             {item[1].name}
           </div>
-          <div className="search-channels__results-icon" data-id="innerest">{item[1].users.length} <FontAwesomeIcon icon={faUserFriends}/></div>
+          <div className="search-channels__results-icon" data-id="innerest">{Object.values(item[1].users).length} <FontAwesomeIcon icon={faUserFriends}/></div>
         </div>
         )
       )

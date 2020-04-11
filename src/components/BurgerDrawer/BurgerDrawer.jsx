@@ -18,7 +18,7 @@ const BurgerDrawer = React.forwardRef(({channelsList, enterRoom, showModal },{ch
           <div className="placeholder-pic"></div>
         </div>
         <div className="burger-drawer__header--right">
-          <input className="burger-drawer__drawer-search" type="text" name="search-channels" />
+          <input className="burger-drawer__search" type="text" name="search-channels" />
         </div>
       </div>
       <div className="burger-drawer__body">
