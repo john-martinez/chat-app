@@ -43,7 +43,7 @@ export default function MainPage(props){
           userSpecificChannels = Object.fromEntries(userSpecificChannels);
           if (!channelsList) setChannelsList(userSpecificChannels); 
           if (!currentChannel) {
-            setcurrentChannel(['0', {name: 'General'}]); // general chat 
+            setcurrentChannel(['0', {name: 'general'}]); // general chat 
             setMessageList(Object.entries(snap.val()['0'].messages))
           }
         })
@@ -63,6 +63,8 @@ export default function MainPage(props){
 
   useEffect(()=>{
     // componentDidUpdate
+
+    // need to revise this into child_added later on
     if (currentChannel){
       firebase.database().ref(`channels/${currentChannel[0]}`).child('messages').on('value', snap=>{
         let msgs = Object.entries(snap.val());
@@ -70,6 +72,10 @@ export default function MainPage(props){
         previousMessageList.current = msgs.length;
       })
     }
+    firebase.database().ref().child('channels').on('value', snap=>{
+      if (completeChannelsList.current && Object.entries(completeChannelsList.current).length !== Object.entries(snap.val()).length)
+        completeChannelsList.current = snap.val();
+    })
   })
 
   useEffect(()=>{
