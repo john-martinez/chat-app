@@ -1,9 +1,10 @@
 .chat-room {
-  display: flex;
+  display: inline-flex;
   flex-direction: column;
   position: relative;
   height: 100%;
-  
+  vertical-align: top;
+
   overflow: hidden;
   &__input-container { 
     display: flex; 

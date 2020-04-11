@@ -6,9 +6,8 @@
   background-color: black;
 }
 .main-page{
-    min-width: 200vw;
+    width: 200vw;
     height: 100vh;
-    display: flex;
     position: relative;
 
     &__heading{
