@@ -5,7 +5,7 @@
     height: 100%;
     width: 0vw;
     &--visible { width: 80vw }
-    &-search { width: 100% }
+    &__search { width: 100% }
     &__item { 
       display: block; 
       cursor: pointer;

@@ -13,9 +13,10 @@ import './MainPage.scss';
 export default function MainPage(props){
   const [user, setUser] = useState('');
   const [channelsList, setChannelsList] = useState(null);
-  const [currentChannel, setcurrentChannel] = useState(''); // general 
+  const [currentChannel, setcurrentChannel] = useState('');  
   const [messageList, setMessageList] = useState(null);
   const [showModal, setShowModal] = useState(false);
+  const [showSearch, setShowSearch] = useState(true);
 
   // force render hooks
   const [channelCreated, setChannelCreated] = useState(false);
@@ -24,6 +25,7 @@ export default function MainPage(props){
   const channelsDrawer = useRef();
   const channelsDrawerHeader = useRef();
   const previousMessageList = useRef();
+  const completeChannelsList = useRef();
 
   // database setup
   const auth = firebase.auth();
@@ -31,19 +33,21 @@ export default function MainPage(props){
 
   function onAuthStateChange(){
         return  auth.onAuthStateChanged(cred=>{ 
-
         // Initialization
         channels.once('value', snap=>{
-          let userSpecificChannels = Object.entries(snap.val()).filter(channel=>channel[1].users.includes(cred.email) || channel[1].name === 'General');
+          completeChannelsList.current = snap.val();
+          let userSpecificChannels = Object.entries(snap.val()).filter(channel=> {
+            let x = Object.values(channel[1].users);
+            return x.includes(cred.email) || channel[1].name === 'general'
+          })
           userSpecificChannels = Object.fromEntries(userSpecificChannels);
           if (!channelsList) setChannelsList(userSpecificChannels); 
           if (!currentChannel) {
-            setcurrentChannel(['-M4NiJvyfWLjTUJ3lsCK', {name: 'General'}]); // general chat 
-            setMessageList(Object.entries(snap.val()['-M4NiJvyfWLjTUJ3lsCK'].messages))
+            setcurrentChannel(['0', {name: 'general'}]); // general chat 
+            setMessageList(Object.entries(snap.val()['0'].messages))
           }
         })
 
-        
         // redirect when user is not signed in
         if (cred) setUser(cred.email)
         else props.history.push('/login')
@@ -59,6 +63,8 @@ export default function MainPage(props){
 
   useEffect(()=>{
     // componentDidUpdate
+
+    // need to revise this into child_added later on
     if (currentChannel){
       firebase.database().ref(`channels/${currentChannel[0]}`).child('messages').on('value', snap=>{
         let msgs = Object.entries(snap.val());
@@ -66,6 +72,10 @@ export default function MainPage(props){
         previousMessageList.current = msgs.length;
       })
     }
+    firebase.database().ref().child('channels').on('value', snap=>{
+      // if (completeChannelsList.current && Object.entries(completeChannelsList.current).length !== Object.entries(snap.val()).length)
+        completeChannelsList.current = snap.val();
+    })
   })
 
   useEffect(()=>{
@@ -81,12 +91,15 @@ export default function MainPage(props){
     // to refresh channels list upon adding a new one
     if (user){
       channels.on('value', snap=>{
-        let userSpecificChannels = Object.entries(snap.val()).filter(channel=>channel[1].users.includes(user) || channel[1].name === 'General');
+        let userSpecificChannels = Object.entries(snap.val()).filter(channel=>{
+          let x = Object.values(channel[1].users);
+          return x.includes(user) || channel[1].name === 'general'
+        });
         userSpecificChannels = Object.fromEntries(userSpecificChannels);
         setChannelsList(userSpecificChannels); 
       })
     }
-  }, [channelCreated])
+  }, [channelCreated, showModal])
 
   
   const displayChannels = () => {
@@ -113,6 +126,13 @@ export default function MainPage(props){
     setChannelCreated(!channelCreated);
   }
   
+  const addUserToChannel = key => {
+    // console.log();
+    firebase.database().ref('channels/' + key).child('users').push(user);
+    setShowModal(false);
+  }
+
+  const toggleSearchOrFind = () => setShowSearch(!showSearch)
   const showModalForm = () => setShowModal(!showModal);
   const sendMessage = e=>{
     e.preventDefault();
@@ -132,8 +152,9 @@ export default function MainPage(props){
       {user 
         ? (<>
           {showModal 
-            // ? <Modal hideModal={showModalForm}><SearchChannels handler={createRoom} /> </Modal> 
-            ? <Modal hideModal={showModalForm}><ModalForm handler={createRoom} /> </Modal> 
+            ? showSearch 
+              ? <Modal hideModal={showModalForm}><SearchChannels channelsList={completeChannelsList.current} user={user} handler={toggleSearchOrFind} addUserToChannel={addUserToChannel} /> </Modal> 
+              : <Modal hideModal={showModalForm}><ModalForm createRoom={createRoom} handler={toggleSearchOrFind}/> </Modal> 
             : <></>}
           <BurgerDrawer showModal={showModalForm} channelsList={channelsList} enterRoom={enterRoom} ref={{channelsDrawer, channelsDrawerHeader}} />
           <Chatroom messages={messageList} testDataFlow={sendMessage} channel={currentChannel} displayChannels={displayChannels}/>
