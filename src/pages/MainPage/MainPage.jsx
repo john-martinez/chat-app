@@ -73,7 +73,7 @@ export default function MainPage(props){
       })
     }
     firebase.database().ref().child('channels').on('value', snap=>{
-      if (completeChannelsList.current && Object.entries(completeChannelsList.current).length !== Object.entries(snap.val()).length)
+      // if (completeChannelsList.current && Object.entries(completeChannelsList.current).length !== Object.entries(snap.val()).length)
         completeChannelsList.current = snap.val();
     })
   })
