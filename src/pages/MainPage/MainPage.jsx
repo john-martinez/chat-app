@@ -30,7 +30,7 @@ export default function MainPage(props){
   const channels = firebase.database().ref().child('channels');
 
   
-  useEffect(()=>{ channels.on('value', snap=> completeChannelsList.current = snap.val())
+  useEffect(()=>{ channels.on('value', snap=> completeChannelsList.current = snap.val())})  
   useEffect(()=>{
     // to refresh channels list upon adding a new one
     if (user){
