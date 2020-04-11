@@ -13,7 +13,7 @@ import './MainPage.scss';
 export default function MainPage(props){
   const [user, setUser] = useState('');
   const [channelsList, setChannelsList] = useState(null);
-  const [currentChannel, setcurrentChannel] = useState(''); // general 
+  const [currentChannel, setcurrentChannel] = useState('');  
   const [messageList, setMessageList] = useState(null);
   const [showModal, setShowModal] = useState(false);
   const [showSearch, setShowSearch] = useState(true);
@@ -33,20 +33,21 @@ export default function MainPage(props){
 
   function onAuthStateChange(){
         return  auth.onAuthStateChanged(cred=>{ 
-
         // Initialization
         channels.once('value', snap=>{
           completeChannelsList.current = snap.val();
-          let userSpecificChannels = Object.entries(snap.val()).filter(channel=>channel[1].users.includes(cred.email) || channel[1].name === 'General');
+          let userSpecificChannels = Object.entries(snap.val()).filter(channel=> {
+            let x = Object.values(channel[1].users);
+            return x.includes(cred.email) || channel[1].name === 'General'
+          })
           userSpecificChannels = Object.fromEntries(userSpecificChannels);
           if (!channelsList) setChannelsList(userSpecificChannels); 
           if (!currentChannel) {
-            setcurrentChannel(['-M4NiJvyfWLjTUJ3lsCK', {name: 'General'}]); // general chat 
-            setMessageList(Object.entries(snap.val()['-M4NiJvyfWLjTUJ3lsCK'].messages))
+            setcurrentChannel(['0', {name: 'General'}]); // general chat 
+            setMessageList(Object.entries(snap.val()['0'].messages))
           }
         })
 
-        
         // redirect when user is not signed in
         if (cred) setUser(cred.email)
         else props.history.push('/login')
@@ -116,6 +117,10 @@ export default function MainPage(props){
     setChannelCreated(!channelCreated);
   }
   
+  const addUserToChannel = e => {
+    firebase.database().ref('channels/' + e.target.dataset.id).child('users').push(user);
+    setShowModal(false);
+  }
   const toggleSearchOrFind = () => setShowSearch(!showSearch)
   const showModalForm = () => setShowModal(!showModal);
   const sendMessage = e=>{
@@ -137,7 +142,7 @@ export default function MainPage(props){
         ? (<>
           {showModal 
             ? showSearch 
-              ? <Modal hideModal={showModalForm}><SearchChannels channelsList={completeChannelsList.current} user={user} handler={toggleSearchOrFind} /> </Modal> 
+              ? <Modal hideModal={showModalForm}><SearchChannels channelsList={completeChannelsList.current} user={user} handler={toggleSearchOrFind} addUserToChannel={addUserToChannel} /> </Modal> 
               : <Modal hideModal={showModalForm}><ModalForm createRoom={createRoom} handler={toggleSearchOrFind}/> </Modal> 
             : <></>}
           <BurgerDrawer showModal={showModalForm} channelsList={channelsList} enterRoom={enterRoom} ref={{channelsDrawer, channelsDrawerHeader}} />

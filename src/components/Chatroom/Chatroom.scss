@@ -3,13 +3,14 @@
   flex-direction: column;
   position: relative;
   height: 100%;
-  flex-grow: 1;
+  
   overflow: hidden;
   &__input-container { 
     display: flex; 
     width: 100vw;
   }
   &__messages { 
+    flex-grow: 1;
     margin-top: 41px; 
     padding: 0 10px;
     overflow: scroll;
