@@ -4,7 +4,7 @@ import firebase from 'firebase/app';
 import 'firebase/firebase-database';
 import './Chatroom.scss';
 
-const Chatroom = React.forwardRef(({ user, channel, displayChannels},ref) => {
+const Chatroom = React.forwardRef(({ user, channel, displayChannels, signOut},ref) => {
   const messagesContainer = useRef();
   const prevChannel = useRef();
   const [msgs, setMsgs] = useState([]);
@@ -49,7 +49,7 @@ const Chatroom = React.forwardRef(({ user, channel, displayChannels},ref) => {
 
   return(
     <div className="chat-room" ref={ref}>
-      <Navbar channel={channel} displayChannels={displayChannels} />
+      <Navbar channel={channel} displayChannels={displayChannels} signOut={signOut} user={user}/>
       <div className="chat-room__messages" ref={messagesContainer} onClick={(e)=>displayChannels(true)}>
         {
           msgs.length && 

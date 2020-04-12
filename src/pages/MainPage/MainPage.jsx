@@ -49,7 +49,7 @@ export default function MainPage(props){
   function onAuthStateChange(){
         return  auth.onAuthStateChanged(cred=>{ 
         // Initialization
-        channels.once('value', snap=>{
+        if(cred){channels.once('value', snap=>{
           completeChannelsList.current = snap.val();
           let userSpecificChannels = Object.entries(snap.val()).filter(channel=> {
             let x = Object.values(channel[1].users);
@@ -58,7 +58,7 @@ export default function MainPage(props){
           userSpecificChannels = Object.fromEntries(userSpecificChannels);
           if (!channelsList) setChannelsList(userSpecificChannels); 
           if (!currentChannel) setcurrentChannel(['0', {name: 'general'}]);
-        })
+        })}
 
         // redirect when user is not signed in
         if (cred) setUser(cred.email)
@@ -98,7 +98,7 @@ export default function MainPage(props){
       name: `${name.value}`,
       password:`${password.value}`,
       users: [user],
-      messages: [{message: 'Hello, welcome to the new chatroom!', sender: 'default'}]
+      messages: [{message: 'Hello, welcome to the new chatroom!', sender: 'BasedChatBot'}]
     });
     e.target.reset();
     setShowModal(false);
@@ -123,7 +123,7 @@ export default function MainPage(props){
               : <Modal hideModal={showModalForm}><ModalForm createRoom={createRoom} handler={toggleSearchOrFind}/> </Modal> 
             : <></>}
           <BurgerDrawer showModal={showModalForm} channelsList={channelsList} enterRoom={enterRoom} ref={{channelsDrawer, channelsDrawerHeader, chatroom}} />
-          <Chatroom ref={chatroom} user={user} channel={currentChannel} displayChannels={displayChannels}/>
+          <Chatroom ref={chatroom} user={user} channel={currentChannel} displayChannels={displayChannels} signOut={signOut}/>
         </>)
         : <h1>LOADING...</h1>
       }

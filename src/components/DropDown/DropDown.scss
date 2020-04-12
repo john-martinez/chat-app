@@ -1,0 +1,17 @@
+@import '../../styles/mixins';
+
+.dropdown{
+    display: flex;
+    flex-direction: column;
+    position: absolute;
+    top: -5;
+    right: 0;
+    z-index: 5;
+    background-color: #FAFAFA;
+    &__options{
+        border: 1px solid #AFAFAF;
+    }
+    &__options:hover{
+        background-color: darken($color: #FAFAFA, $amount: 25);
+    }
+}
