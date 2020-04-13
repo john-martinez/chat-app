@@ -1,4 +1,6 @@
 import React, { useEffect, useRef, useState } from 'react';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
+import { faCompressAlt } from '@fortawesome/free-solid-svg-icons'
 import Navbar from '../Navbar/Navbar';
 import firebase from 'firebase/app';
 import 'firebase/firebase-database';
@@ -8,6 +10,7 @@ const Chatroom = React.forwardRef(({ user, channel, displayChannels},ref) => {
   const messagesContainer = useRef();
   const prevChannel = useRef();
   const [msgs, setMsgs] = useState([]);
+  const [text, setText] = useState('');
   const messages = firebase.database().ref('channels/' + channel[0]).child('messages');
 
   useEffect(()=>{
@@ -47,6 +50,7 @@ const Chatroom = React.forwardRef(({ user, channel, displayChannels},ref) => {
     e.target.reset();
   }
 
+  const onChangeHandler = e => setText(e.target.value)
   return(
     <div className="chat-room" ref={ref}>
       <Navbar channel={channel} displayChannels={displayChannels} />
@@ -61,9 +65,12 @@ const Chatroom = React.forwardRef(({ user, channel, displayChannels},ref) => {
         }
       </div>
       <form onSubmit={sendMessage} className="chat-room__input-container">
-        <label htmlFor="message"></label>
-        <input className="chat-room__field" type="text" name="message" />
-        <button>SEND</button>
+        <div className="chat-room__field-container">
+          <label htmlFor="message"></label>
+          <div className="chat-room__field-target">{text}</div>
+          <textarea className="chat-room__field" value={text} onChange={onChangeHandler} type="text" name="message" placeholder={`Message #${channel[1].name}`} ></textarea>
+        </div>
+        <div className="chat-room__field-icon"><FontAwesomeIcon icon={faCompressAlt} /></div>
       </form>
     </div>
   );
