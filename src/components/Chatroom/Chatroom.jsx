@@ -63,7 +63,7 @@ const Chatroom = React.forwardRef(({ user, channel, displayChannels, signOut, ed
       <form onSubmit={sendMessage} className="chat-room__input-container">
         <label htmlFor="message"></label>
         <input className="chat-room__field" type="text" name="message" />
-        <button>SEND</button>
+        <button className="chat-room__button">SEND</button>
       </form>
     </div>
   );
