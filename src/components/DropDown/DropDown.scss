@@ -9,7 +9,13 @@
     z-index: 5;
     background-color: #FAFAFA;
     &__options{
-        border: 1px solid #AFAFAF;
+        border: 1px solid #AFAFAF
+    }
+    &__options-text-only{
+        cursor: default        
+    }
+    &__options-text-only:hover{   
+        background-color: #FAFAFA
     }
     &__options:hover{
         background-color: darken($color: #FAFAFA, $amount: 25);

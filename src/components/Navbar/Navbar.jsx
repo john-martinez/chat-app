@@ -4,11 +4,13 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faBars, faEllipsisV, faSearch } from '@fortawesome/free-solid-svg-icons'
 import DropDown from '../DropDown/DropDown';
 
-export default function Navbar({displayChannels, channel, signOut, user}) {
+export default function Navbar({displayChannels, channel, user, editProfile, signOut}) {
 
   const [showDropDown, setShowDropDown] = useState(false);
-  const showDropDownHandler = () => setShowDropDown(!showDropDown);
-
+  const showDropDownHandler = () => {    
+    setShowDropDown(!showDropDown);    
+  }
+  
   return (
     <header className="header">
       <nav className="navbar">
@@ -19,12 +21,12 @@ export default function Navbar({displayChannels, channel, signOut, user}) {
           #{channel.length && channel[1].name}
         </div>
         <div className="navbar__right">
-          <span>
+          <span  className="navbar__spans">
             <FontAwesomeIcon icon={faSearch}/>
           </span>
-          <span onClick={showDropDownHandler}>
-            {showDropDown ? (<DropDown signOut={signOut} user={user}/>) : <></>}
-            <FontAwesomeIcon icon={faEllipsisV}/> 
+          <span onClick={showDropDownHandler} className="navbar__spans">
+            {showDropDown ? (<DropDown user={user} editProfile={editProfile} signOut={signOut}/>) : <></>}
+            <FontAwesomeIcon icon={faEllipsisV} /> 
           </span>
         </div>
       </nav>

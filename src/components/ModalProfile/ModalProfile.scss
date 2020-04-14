@@ -1,0 +1,26 @@
+@import '../../styles/mixins';
+
+.modal-profile{
+    &__phone{
+        display: inline-flex;
+    }
+    &__close{
+        top: 5px;
+        right: 5px;
+        position: absolute;
+        width: 30px;
+    }
+}
+
+.PhoneInputCountry{
+    display: flex;
+}
+.PhoneInputCountrySelect{
+    width: 80px;
+    margin-right: 5px;
+}
+.PhoneInputCountryIcon{
+    display: flex;
+    width: 50px;
+    margin-right: 5px;
+}
