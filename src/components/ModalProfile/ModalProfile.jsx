@@ -4,6 +4,8 @@ import PhoneInput from 'react-phone-number-input'
 import firebase from 'firebase/app';
 import 'firebase/firebase-auth';
 import 'firebase/firebase-database';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faUserCircle } from '@fortawesome/free-solid-svg-icons';
 
 export default function ModalProfile({hideModal}){
     const user = firebase.auth().currentUser;
@@ -42,7 +44,7 @@ export default function ModalProfile({hideModal}){
         <div className="form-page__row">
             <label className="form-page__label" htmlFor="text-image">Display Picture</label>
             <div className="modal-profile__image-container">
-                <img src={value.photoURL} className="modal-profile__image" alt="avatar"/>
+                {value.photoURL ? (<img src={value.photoURL} className="modal-profile__image" alt="avatar"/>) : <FontAwesomeIcon icon={faUserCircle} className="modal-profile__image"/>}
                 <input className="form-page__input" type="url" name="photoURL" placeholder="Enter Image URL Only" value={value.photoURL ? value.photoURL : ''} onChange={handleChange}/>
             </div>
         </div>
