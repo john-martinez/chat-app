@@ -1,15 +1,23 @@
 import React,{useState} from 'react';
 import './ModalProfile.scss';
 import PhoneInput from 'react-phone-number-input'
+import firebase from 'firebase/app';
+import 'firebase/firebase-auth';
+import 'firebase/firebase-database';
 
 export default function ModalProfile({hideModal}){
-    const [value, setValue] = useState();
-    // console.log(value);
-
+    const user = firebase.auth().currentUser;
+    const [phone, setPhone] = useState('');
+    const [name, setName] = useState('');
+    const [image, setImage] = useState('');
     const updateProfile = (e) =>{
         e.preventDefault();
-        const {text, textImage, phone} =e.target;
-        console.log(e.target);
+        // user.updateProfile({
+        //     displayName: name,
+        //     photoURL: image,
+        //     phoneNumber: phone
+        //   }).then(res=>console.log('success', res)).catch(err=>console.log(err));
+        console.log(phone, name, image);
         e.target.reset();
         hideModal();
     }
@@ -20,15 +28,15 @@ export default function ModalProfile({hideModal}){
       <form onSubmit={updateProfile}>
         <div className="form-page__row">
             <label className="form-page__label" htmlFor="text">Display Name</label>
-            <input className="form-page__input" type="text" name="text" placeholder="Profile Display Name" />
+            <input className="form-page__input" type="text" name="text" placeholder="Profile Display Name" value={name} onChange={setName} />
         </div>
         <div className="form-page__row">
             <label className="form-page__label" htmlFor="text-image">Display Picture</label>
-            <input className="form-page__input" type="url" name="textImage" placeholder="Enter Image URL Only" />
+            <input className="form-page__input" type="url" name="textImage" placeholder="Enter Image URL Only" value={image} onChange={setImage}/>
         </div>
         <div className="form-page__row">
             <label className="form-page__label" htmlFor="phone">Phone Number</label>
-            <PhoneInput defaultCountry="CA" placeholder="Enter Phone Number" value={value} onChange={setValue} className="modal-profile__phone" name="phone"/>
+            <PhoneInput defaultCountry="CA" placeholder="Enter Phone Number" value={phone} onChange={setPhone} className="modal-profile__phone" name="phone"/>
         </div>
         <div className="form-page__row form-page__row--button">
             <button className="form-page__button">Update</button>
