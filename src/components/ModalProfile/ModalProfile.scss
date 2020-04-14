@@ -1,6 +1,7 @@
 @import '../../styles/mixins';
 
 .modal-profile{
+    min-width: 300px;
     &__phone{
         display: inline-flex;
     }
@@ -9,6 +10,16 @@
         right: 5px;
         position: absolute;
         width: 30px;
+    }
+    &__image{
+        width: 40px;
+        height: 40px;
+        border-radius: 50%;
+        margin-right: 4px;
+    }
+    &__image-container{
+        display: flex;
+
     }
 }
 
@@ -23,4 +34,9 @@
     display: flex;
     width: 50px;
     margin-right: 5px;
+}
+
+#recaptcha-container{
+    width: 300px;
+    height: 40px;
 }

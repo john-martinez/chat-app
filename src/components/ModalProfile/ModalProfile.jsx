@@ -11,20 +11,23 @@ export default function ModalProfile({hideModal}){
         displayName: user.displayName,
         photoURL : user.photoURL
     });
-    const [phone, setPhone] = useState();
+    const [phone, setPhone] = useState(user.phoneNumber);
+    
+
+
     const updateProfile = (e) =>{
         e.preventDefault();
         user.updateProfile({
             displayName: value.displayName,
             photoURL: value.photoURL
           }).then(res=>console.log('success')).catch(err=>console.log(err));
-        console.log(value, phone);
-        console.log(user);
         e.target.reset();
         hideModal();
     }
 
-    const handleChange = (e) => setValue({...value, [e.target.name] : e.target.value});
+    const handleChange = (e) => {
+        setValue({...value, [e.target.name] : e.target.value});
+    }
     
 
     
@@ -38,7 +41,10 @@ export default function ModalProfile({hideModal}){
         </div>
         <div className="form-page__row">
             <label className="form-page__label" htmlFor="text-image">Display Picture</label>
-            <input className="form-page__input" type="url" name="photoURL" placeholder="Enter Image URL Only" value={value.photoURL ? value.photoURL : ''} onChange={handleChange}/>
+            <div className="modal-profile__image-container">
+                <img src={value.photoURL} className="modal-profile__image" alt="avatar"/>
+                <input className="form-page__input" type="url" name="photoURL" placeholder="Enter Image URL Only" value={value.photoURL ? value.photoURL : ''} onChange={handleChange}/>
+            </div>
         </div>
         <div className="form-page__row">
             <label className="form-page__label" htmlFor="phone">Phone Number</label>
