@@ -41,13 +41,14 @@ const Chatroom = React.forwardRef(({ user, channel, displayChannels},ref) => {
 
   const sendMessage = messageForm =>{
     let { message } = messageForm.current;
-    let messageObj = {
-      message: message.value, 
-      sender: user,
-      timestamp: Date.now()
-    }
-    messages.push(messageObj);
-    setText(''); // clears the input field 
+    if (message.value.trim().length){
+      let messageObj = {
+        message: message.value, 
+        sender: user,
+        timestamp: Date.now()
+      }
+      messages.push(messageObj);
+    } 
   }
 
   const onChangeHandler = e => { 
@@ -55,10 +56,15 @@ const Chatroom = React.forwardRef(({ user, channel, displayChannels},ref) => {
   }
   
   const onKeypressHandler = e => {
-    if (e.key === 'Enter' && !e.shiftKey) {
-      sendMessage(messageForm);
+    if (e.key === 'Enter') {
+      if (!e.shiftKey){
+        sendMessage(messageForm);
+        setText(''); // clears the input field 
+      }
     }
   }
+
+  console.log(text);
   return(
     <div className="chat-room" ref={ref}>
       <Navbar channel={channel} displayChannels={displayChannels} />
