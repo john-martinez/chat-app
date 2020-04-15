@@ -57,6 +57,7 @@
     &-container { 
       flex-grow: 1;
       min-height: 100%;
+      max-height: 220px;
       height: auto;
       position: relative;
       background-color:  #fffbde;
@@ -66,16 +67,18 @@
       background-color: #fffbde;
       height: 51px;
     }
-  }
-  &__field-target {
-    width: 100%;
-    height: 100%;
-    padding: 15px;
-    border: none;
-    outline: none;
-    word-break: break-word;
-    background-color: #fffbde;
-   
+    &-target {
+      width: 100%;
+      height: 100%;
+      max-height: 220px;
+      overflow: hidden;
+      padding: 15px;
+      border: none;
+      outline: none;
+      word-break: break-word;
+      background-color: #fffbde;
+      white-space: pre-wrap;
+    }
   }
   
   
