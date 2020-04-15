@@ -10,6 +10,10 @@ export default function Navbar({displayChannels, channel, user, editProfile, sig
   const showDropDownHandler = () => {    
     setShowDropDown(!showDropDown);    
   }
+  const [search, setSearch] = useState(false);
+  const showSearchHandler = () => {    
+    setSearch(!search);
+  }
   
   return (
     <header className="header">
@@ -21,12 +25,13 @@ export default function Navbar({displayChannels, channel, user, editProfile, sig
           #{channel.length && channel[1].name}
         </div>
         <div className="navbar__right">
-          <span  className="navbar__spans">
-            <FontAwesomeIcon icon={faSearch}/>
+          <span className="navbar__spans">
+            {search ? (<input type="text" placeholder="Search messages..." className="navbar__search"></input>) : <></>}
+            <FontAwesomeIcon icon={faSearch} className="navbar__search-icon" onClick={showSearchHandler} /> 
           </span>
-          <span onClick={showDropDownHandler} className="navbar__spans">
+          <span className="navbar__spans">
             {showDropDown ? (<DropDown user={user} editProfile={editProfile} signOut={signOut}/>) : <></>}
-            <FontAwesomeIcon icon={faEllipsisV} /> 
+            <FontAwesomeIcon icon={faEllipsisV} onClick={showDropDownHandler}/> 
           </span>
         </div>
       </nav>
