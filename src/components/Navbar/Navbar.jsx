@@ -3,6 +3,7 @@ import './Navbar.scss';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faBars, faEllipsisV, faSearch } from '@fortawesome/free-solid-svg-icons'
 import DropDown from '../DropDown/DropDown';
+import SearchMessages from '../SearchMessages/SearchMessages';
 
 export default function Navbar({displayChannels, channel, user, editProfile, signOut}) {
 
@@ -26,7 +27,7 @@ export default function Navbar({displayChannels, channel, user, editProfile, sig
         </div>
         <div className="navbar__right">
           <span className="navbar__spans">
-            {search ? (<input type="text" placeholder="Search messages..." className="navbar__search"></input>) : <></>}
+            {search ? (<SearchMessages channel={channel}/>) : <></>}
             <FontAwesomeIcon icon={faSearch} className="navbar__search-icon" onClick={showSearchHandler} /> 
           </span>
           <span className="navbar__spans">

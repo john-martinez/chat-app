@@ -1,0 +1,11 @@
+@import '../../styles/mixins';
+
+.sm{
+    &__search{
+    margin-right: 5px;
+    border-radius: 2px;
+    background-color: #fffbde;
+    border: none;
+    width: 200px;
+    }
+}
