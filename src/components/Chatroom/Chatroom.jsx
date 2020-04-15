@@ -64,7 +64,6 @@ const Chatroom = React.forwardRef(({ user, channel, displayChannels},ref) => {
     }
   }
 
-  console.log(text);
   return(
     <div className="chat-room" ref={ref}>
       <Navbar channel={channel} displayChannels={displayChannels} />
