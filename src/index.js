@@ -27,6 +27,7 @@ const firebaseConfig = {
   measurementId: REACT_APP_MEASUREMENT_ID
 };
 
+console.log(firebaseConfig);
 firebase.initializeApp(firebaseConfig);
 
 ReactDOM.render(

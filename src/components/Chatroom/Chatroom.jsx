@@ -51,16 +51,14 @@ const Chatroom = React.forwardRef(({ user, channel, displayChannels},ref) => {
     } 
   }
 
-  const onChangeHandler = e => { 
-    setText(e.target.value);
-  }
-  
   const onKeypressHandler = e => {
     if (e.key === 'Enter') {
       if (!e.shiftKey){
         sendMessage(messageForm);
         setText(''); // clears the input field 
       }
+    } else {
+      setText(messageForm.current.value)
     }
   }
 
@@ -84,7 +82,7 @@ const Chatroom = React.forwardRef(({ user, channel, displayChannels},ref) => {
           <textarea 
             className="chat-room__field" 
             value={text} 
-            onChange={onChangeHandler} 
+            onChange={()=>{} /* do nothing change is handled by keypress */} 
             onKeyPress={onKeypressHandler}
             type="text" 
             name="message" 
