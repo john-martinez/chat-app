@@ -38,7 +38,17 @@
     &-pic { font-size: 2rem }
     &-blurb { word-break: break-word }
     &-sender { font-weight: bold }
-    &-timestamp { font-size: 0.8rem; color: #6b6b69 }
+    &-timestamp { 
+      font-size: 0.8rem; 
+      color: #6b6b69;
+      filter: opacity(0); 
+    }
+    &--same-user {
+      margin-top: 5px;
+      &:hover .chat-room__message-timestamp {
+        filter: opacity(1);
+      }
+    }
   }
 
   &__input {

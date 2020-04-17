@@ -78,7 +78,7 @@ const Chatroom = React.forwardRef(({ user, channel, displayChannels},ref) => {
       let isSameUser =  index && msgs[index-1].sender !== val.sender;
       if (isSameUser){
         return (
-          <div className={`chat-room__message ${!isSameUser ? 'chat-room__message--margin-top' : ''}`} key={index}>
+          <div className={`chat-room__message ${isSameUser ? 'chat-room__message--margin-bottom' : ''}`} key={index}>
             <div className="chat-room__message--left">
               <span className="chat-room__message-pic">
                 <FontAwesomeIcon icon={faUserCircle} />
