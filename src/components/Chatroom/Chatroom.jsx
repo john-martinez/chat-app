@@ -1,6 +1,6 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { faCompressAlt } from '@fortawesome/free-solid-svg-icons'
+import { faCompressAlt, faUserCircle } from '@fortawesome/free-solid-svg-icons'
 import Navbar from '../Navbar/Navbar';
 import firebase from 'firebase/app';
 import 'firebase/firebase-database';
@@ -43,7 +43,7 @@ const Chatroom = React.forwardRef(({ user, channel, displayChannels},ref) => {
     let { message } = messageForm.current;
     if (message.value.trim().length){
       let messageObj = {
-        message: message.value, 
+        message: message.value.trim(), 
         sender: user,
         timestamp: Date.now()
       }
@@ -62,18 +62,60 @@ const Chatroom = React.forwardRef(({ user, channel, displayChannels},ref) => {
     }
   }
 
+  const retrieveDate = (timestamp) => {
+    let date = new Date(timestamp) + ''; // convert date object to string
+    return date.split(' ').slice(1,4).join(' ');
+  }
+
+  const retrieveTime = (timestamp) => {
+    let date = new Date(timestamp) + ''; // convert date object to string
+    return date.split(' ')[4];
+  }
+
+  const renderMessage = () => {
+    return msgs.length && 
+    msgs.map((val,index) => {
+      let isSameUser =  index && msgs[index-1].sender !== val.sender;
+      if (isSameUser){
+        return (
+          <div className={`chat-room__message ${!isSameUser ? 'chat-room__message--margin-top' : ''}`} key={index}>
+            <div className="chat-room__message--left">
+              <span className="chat-room__message-pic">
+                <FontAwesomeIcon icon={faUserCircle} />
+              </span>
+            </div>
+            <div className="chat-room__message--right">
+              <div className="chat-room__message-header">
+                <span className="chat-room__message-sender">{val.sender.split('@')[0]} </span>
+                <span className="chat-room__message-timestamp">{retrieveDate(val.timestamp)}</span>
+              </div>
+              <div className="chat-room__message-blurb">
+                {val.message}
+              </div>
+            </div>
+          </div>
+        )
+      } else {
+        return (
+          <div className="chat-room__message chat-room__message--same-user" key={index}>
+            <div className="chat-room__message--left">
+            <span className="chat-room__message-timestamp">{retrieveTime(val.timestamp)}</span>
+            </div>
+            <div className="chat-room__message--right">
+              <div className="chat-room__message-blurb">
+                  {val.message}
+              </div>
+            </div>
+          </div>
+        )
+      }
+    })
+  }
   return(
     <div className="chat-room" ref={ref}>
       <Navbar channel={channel} displayChannels={displayChannels} />
       <div className="chat-room__messages" ref={messagesContainer} onClick={(e)=>displayChannels(true)}>
-        {
-          msgs.length && 
-          msgs.map((val,i) => (
-          <div className="chat-room__message" key={i}>
-            {val.sender.split('@')[0] + ': '+val.message}
-          </div>
-          ))
-        }
+        { renderMessage() }
       </div>
       <form onSubmit={sendMessage} className="chat-room__input-container" ref={messageForm}>
         <div className="chat-room__field-container">
