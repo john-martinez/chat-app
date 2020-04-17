@@ -71,8 +71,14 @@ const Chatroom = React.forwardRef(({ user, channel, displayChannels},ref) => {
   }
 
   const retrieveTime = (timestamp) => {
-    let date = new Date(timestamp) + ''; // convert date object to string
-    return date.split(' ')[4];
+    const date = new Date(timestamp) + ''; // convert date object to string
+    const time = date.split(' ')[4].split(':').slice(0,2);
+    let hours = parseInt(time[0]);
+    let minutes = time[1];
+    const isAfternoon = hours > 12;
+    if (isAfternoon) 
+      hours = hours - 12;
+    return `${hours < 10 ? '0'+hours : hours}:${minutes} ${isAfternoon ? 'PM' : 'AM'}`
   }
 
   const renderMessage = () => {
