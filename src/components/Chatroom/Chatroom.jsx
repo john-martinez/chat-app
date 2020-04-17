@@ -75,8 +75,26 @@ const Chatroom = React.forwardRef(({ user, channel, displayChannels},ref) => {
   const renderMessage = () => {
     return msgs.length && 
     msgs.map((val,index) => {
-      let isSameUser =  index && msgs[index-1].sender !== val.sender;
-      if (isSameUser){
+      const previousMessage = msgs[index-1];
+      const isSameUser =  index && previousMessage.sender === val.sender;
+
+      // checks if message was sent within 5 mintues from the last time the last message was sent
+      const isWithinFiveMinutes = index && (val.timestamp - previousMessage.timestamp <= 60000);
+      
+      if (isSameUser && isWithinFiveMinutes){
+        return (
+          <div className="chat-room__message chat-room__message--same-user" key={index}>
+            <div className="chat-room__message--left">
+            <span className="chat-room__message-timestamp">{retrieveTime(val.timestamp)}</span>
+            </div>
+            <div className="chat-room__message--right">
+              <div className="chat-room__message-blurb">
+                  {val.message}
+              </div>
+            </div>
+          </div>
+        )
+      } else {
         return (
           <div className={`chat-room__message ${isSameUser ? 'chat-room__message--margin-bottom' : ''}`} key={index}>
             <div className="chat-room__message--left">
@@ -87,23 +105,10 @@ const Chatroom = React.forwardRef(({ user, channel, displayChannels},ref) => {
             <div className="chat-room__message--right">
               <div className="chat-room__message-header">
                 <span className="chat-room__message-sender">{val.sender.split('@')[0]} </span>
-                <span className="chat-room__message-timestamp">{retrieveDate(val.timestamp)}</span>
+                <span className="chat-room__message-timestamp chat-room__message-timestamp--visible">{retrieveDate(val.timestamp)}</span>
               </div>
               <div className="chat-room__message-blurb">
                 {val.message}
-              </div>
-            </div>
-          </div>
-        )
-      } else {
-        return (
-          <div className="chat-room__message chat-room__message--same-user" key={index}>
-            <div className="chat-room__message--left">
-            <span className="chat-room__message-timestamp">{retrieveTime(val.timestamp)}</span>
-            </div>
-            <div className="chat-room__message--right">
-              <div className="chat-room__message-blurb">
-                  {val.message}
               </div>
             </div>
           </div>

@@ -42,6 +42,8 @@
       font-size: 0.8rem; 
       color: #6b6b69;
       filter: opacity(0); 
+
+      &--visible { filter: opacity(1)}
     }
     &--same-user {
       margin-top: 5px;
