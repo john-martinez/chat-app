@@ -1,4 +1,6 @@
 import React, { useEffect, useRef, useState } from 'react';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
+import { faCompressAlt } from '@fortawesome/free-solid-svg-icons'
 import Navbar from '../Navbar/Navbar';
 import firebase from 'firebase/app';
 import 'firebase/firebase-database';
@@ -7,7 +9,9 @@ import './Chatroom.scss';
 const Chatroom = React.forwardRef(({ user, channel, displayChannels},ref) => {
   const messagesContainer = useRef();
   const prevChannel = useRef();
+  const messageForm = useRef();
   const [msgs, setMsgs] = useState([]);
+  const [text, setText] = useState('');
   const messages = firebase.database().ref('channels/' + channel[0]).child('messages');
 
   useEffect(()=>{
@@ -35,16 +39,31 @@ const Chatroom = React.forwardRef(({ user, channel, displayChannels},ref) => {
     if (lastMsg) lastMsg.scrollIntoView();
   })
 
-  const sendMessage = e=>{
-    e.preventDefault();
-    const {message} = e.target;
-    let messageObj = {
-      message: message.value, 
-      sender: user,
-      timestamp: Date.now()
+  const sendMessage = messageForm =>{
+    let { message } = messageForm.current;
+    if (message.value.trim().length){
+      let messageObj = {
+        message: message.value, 
+        sender: user,
+        timestamp: Date.now()
+      }
+      messages.push(messageObj);
+    } 
+  }
+
+  const onKeypressHandler = e => {
+    if (e.key === 'Enter') {
+      if (!e.shiftKey){
+        sendMessage(messageForm);
+        setText(''); // clears the input field 
+      }
     }
-    messages.push(messageObj);
-    e.target.reset();
+  }
+
+  const onChangeHandler = e => {
+    const message = e.target.value;
+    const isMessageAWhitespace = message.trim().length === 0;
+    setText(isMessageAWhitespace ? '' : message);
   }
 
   return(
@@ -60,10 +79,20 @@ const Chatroom = React.forwardRef(({ user, channel, displayChannels},ref) => {
           ))
         }
       </div>
-      <form onSubmit={sendMessage} className="chat-room__input-container">
-        <label htmlFor="message"></label>
-        <input className="chat-room__field" type="text" name="message" />
-        <button>SEND</button>
+      <form onSubmit={sendMessage} className="chat-room__input-container" ref={messageForm}>
+        <div className="chat-room__field-container">
+          <label htmlFor="message"></label>
+          <div className="chat-room__field-target">{text}</div>
+          <textarea 
+            className="chat-room__field" 
+            value={text} 
+            onChange={onChangeHandler} 
+            onKeyPress={onKeypressHandler}
+            type="text" 
+            name="message" 
+            placeholder={`Message #${channel[1].name}`} ></textarea>
+        </div>
+        <div className="chat-room__field-icon"><FontAwesomeIcon icon={faCompressAlt} /></div>
       </form>
     </div>
   );
