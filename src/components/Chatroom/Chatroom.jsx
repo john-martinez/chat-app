@@ -57,11 +57,14 @@ const Chatroom = React.forwardRef(({ user, channel, displayChannels},ref) => {
         sendMessage(messageForm);
         setText(''); // clears the input field 
       }
-    } else {
-      setText(messageForm.current.value)
     }
   }
 
+  const onChangeHandler = e => {
+    const message = e.target.value;
+    const isMessageAWhitespace = message.trim().length === 0;
+    setText(isMessageAWhitespace ? '' : message);
+  }
   const retrieveDate = (timestamp) => {
     let date = new Date(timestamp) + ''; // convert date object to string
     return date.split(' ').slice(1,4).join(' ');
@@ -116,6 +119,7 @@ const Chatroom = React.forwardRef(({ user, channel, displayChannels},ref) => {
       }
     })
   }
+
   return(
     <div className="chat-room" ref={ref}>
       <Navbar channel={channel} displayChannels={displayChannels} />
@@ -129,7 +133,7 @@ const Chatroom = React.forwardRef(({ user, channel, displayChannels},ref) => {
           <textarea 
             className="chat-room__field" 
             value={text} 
-            onChange={()=>{} /* do nothing change is handled by keypress */} 
+            onChange={onChangeHandler} 
             onKeyPress={onKeypressHandler}
             type="text" 
             name="message" 
