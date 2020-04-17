@@ -1,5 +1,6 @@
 .chat-room {
   display: inline-flex;
+  color: #262626;
   transition: 0.3s ease-out;
   flex-direction: column;
   position: relative;
@@ -28,7 +29,29 @@
     white-space: pre-line;
   }
 
-  &__message { width: 100% }
+  &__message { 
+    width: 100%;
+    display: flex;
+    &--left { flex-basis: 70px; text-align: center; }
+    &--right { width: 100% }
+    &--margin-bottom { margin-bottom: 10px }
+    &-pic { font-size: 2rem }
+    &-blurb { word-break: break-word }
+    &-sender { font-weight: bold }
+    &-timestamp { 
+      font-size: 0.8rem; 
+      color: #6b6b69;
+      filter: opacity(0); 
+
+      &--visible { filter: opacity(1)}
+    }
+    &--same-user {
+      margin-top: 5px;
+      &:hover .chat-room__message-timestamp {
+        filter: opacity(1);
+      }
+    }
+  }
 
   &__input {
     width: 100%;
