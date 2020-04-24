@@ -37,22 +37,22 @@ export default function ModalProfile({hideModal}){
     <div className="modal-profile">
         <button className="modal-profile__close form-page__button" onClick={hideModal}>X</button>
       <form onSubmit={updateProfile}>
-        <div className="form-page__row">
+        <div className="modal-profile__row">
             <label className="form-page__label" htmlFor="text">Display Name</label>
             <input className="form-page__input" type="text" name="displayName" placeholder="Profile Display Name" value={value.displayName ? value.displayName : ''} onChange={handleChange} />
         </div>
-        <div className="form-page__row">
+        <div className="modal-profile__row">
             <label className="form-page__label" htmlFor="text-image">Display Picture</label>
             <div className="modal-profile__image-container">
                 {value.photoURL ? (<img src={value.photoURL} className="modal-profile__image" alt="avatar"/>) : <FontAwesomeIcon icon={faUserCircle} className="modal-profile__image"/>}
-                <input className="form-page__input" type="url" name="photoURL" placeholder="Enter Image URL Only" value={value.photoURL ? value.photoURL : ''} onChange={handleChange}/>
+                <input className="form-page__input modal-profile__url" type="url" name="photoURL" placeholder="Enter Image URL Only" value={value.photoURL ? value.photoURL : ''} onChange={handleChange}/>
             </div>
         </div>
-        <div className="form-page__row">
+        <div className="modal-profile__row">
             <label className="form-page__label" htmlFor="phone">Phone Number</label>
             <PhoneInput defaultCountry="CA" value={phone ? phone : ''} onChange={setPhone} className="modal-profile__phone" name="phoneNumber"/>
         </div>
-        <div className="form-page__row form-page__row--button">
+        <div className="modal-profile__row form-page__row--button">
             <button className="form-page__button">Update</button>
           </div>
       </form>

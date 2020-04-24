@@ -1,7 +1,7 @@
 @import '../../styles/mixins';
 
 .modal-profile{
-    min-width: 300px;
+    min-width: 200px;
     &__phone{
         display: inline-flex;
     }
@@ -19,8 +19,13 @@
     }
     &__image-container{
         display: flex;
-
     }
+    &__row{
+        margin: 10px 0;
+    }
+    &__url{        
+            padding: 7px 7px;            
+        }
 }
 
 .PhoneInputCountry{
@@ -39,4 +44,6 @@
 #recaptcha-container{
     width: 300px;
     height: 40px;
+}
+.PhoneInputInput{
 }
