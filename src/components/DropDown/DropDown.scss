@@ -11,7 +11,9 @@
     background-color: #d6a542;
     &__options{
         border: 1px solid #e3b459;
-        padding-left: 64px;
+        height: 48px;
+        display: flex;
+        align-items: center;
     }
     &__options-text-only{
         cursor: default;
