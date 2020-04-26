@@ -15,14 +15,14 @@ export default function ModalProfile({hideModal}){
     });
     const [phone, setPhone] = useState(user.phoneNumber);
     
-
-
     const updateProfile = (e) =>{
         e.preventDefault();
-        user.updateProfile({
-            displayName: value.displayName,
+        if(value.displayName.trim().length && value.photoURL.trim().length)
+        {user.updateProfile({
+            displayName: value.displayName.trim(),
             photoURL: value.photoURL
-          }).then(res=>console.log('success')).catch(err=>console.log(err));
+          }).then(res=>console.log('success', user)).catch(err=>console.log(err));
+        }
         e.target.reset();
         hideModal();
     }
@@ -30,8 +30,6 @@ export default function ModalProfile({hideModal}){
     const handleChange = (e) => {
         setValue({...value, [e.target.name] : e.target.value});
     }
-    
-
     
   return(
     <div className="modal-profile">
@@ -44,7 +42,8 @@ export default function ModalProfile({hideModal}){
         <div className="modal-profile__row">
             <label className="form-page__label" htmlFor="text-image">Display Picture</label>
             <div className="modal-profile__image-container">
-                {value.photoURL ? (<img src={value.photoURL} className="modal-profile__image" alt="avatar"/>) : <FontAwesomeIcon icon={faUserCircle} className="modal-profile__image"/>}
+                {      value.photoURL.match(/^(https?|ftp):\/\/+.+(([pP][nN][gG])|([jJ][pP][gG]))$/)
+ ? (<img src={value.photoURL} className="modal-profile__image" alt="avatar"/>) : <FontAwesomeIcon icon={faUserCircle} className="modal-profile__image"/>}
                 <input className="form-page__input modal-profile__url" type="url" name="photoURL" placeholder="Enter Image URL Only" value={value.photoURL ? value.photoURL : ''} onChange={handleChange}/>
             </div>
         </div>
