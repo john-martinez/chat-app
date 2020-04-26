@@ -6,6 +6,7 @@ import 'firebase/firebase-auth';
 import 'firebase/firebase-database';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faUserCircle } from '@fortawesome/free-solid-svg-icons';
+import faUserCircleDownloaded from '../../assets/images/user-circle-solid.svg';
 
 export default function ModalProfile({hideModal}){
     const user = firebase.auth().currentUser;
@@ -31,6 +32,10 @@ export default function ModalProfile({hideModal}){
         setValue({...value, [e.target.name] : e.target.value});
     }
     
+    const handleError = (e) =>{
+      e.target.src=faUserCircleDownloaded;
+    }
+
   return(
     <div className="modal-profile">
         <button className="modal-profile__close form-page__button" onClick={hideModal}>X</button>
@@ -43,7 +48,7 @@ export default function ModalProfile({hideModal}){
             <label className="form-page__label" htmlFor="text-image">Display Picture</label>
             <div className="modal-profile__image-container">
                 {      value.photoURL.match(/^(https?|ftp):\/\/+.+(([pP][nN][gG])|([jJ][pP][gG]))$/)
- ? (<img src={value.photoURL} className="modal-profile__image" alt="avatar"/>) : <FontAwesomeIcon icon={faUserCircle} className="modal-profile__image"/>}
+ ? (<img src={value.photoURL} className="modal-profile__image" alt="avatar" onError={handleError}/>) : <FontAwesomeIcon icon={faUserCircle} className="modal-profile__image"/>}
                 <input className="form-page__input modal-profile__url" type="url" name="photoURL" placeholder="Enter Image URL Only" value={value.photoURL ? value.photoURL : ''} onChange={handleChange}/>
             </div>
         </div>
