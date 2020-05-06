@@ -35,7 +35,18 @@
     &--left { flex-basis: 70px; text-align: center; }
     &--right { width: 100% }
     &--margin-bottom { margin-bottom: 10px }
-    &-pic { font-size: 2rem }
+    &-pic-icon { font-size: 2rem }
+    &-pic { 
+      height: 35px; 
+      width: 35px;
+      margin: 0 auto;
+
+      > img {
+        width: 100%;
+        height: 100%;
+        border-radius: 50%;
+      }
+    }
     &-blurb { word-break: break-word }
     &-sender { font-weight: bold }
     &-timestamp { 
