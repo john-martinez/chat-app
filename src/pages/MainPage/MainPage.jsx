@@ -9,6 +9,7 @@ import 'firebase/firebase-auth';
 import 'firebase/firebase-database';
 import '../FormPage/FormPage.scss';
 import './MainPage.scss';
+import ModalProfile from '../../components/ModalProfile/ModalProfile';
 
 export default function MainPage(props){
   const [user, setUser] = useState('');
@@ -16,6 +17,7 @@ export default function MainPage(props){
   const [currentChannel, setcurrentChannel] = useState('');  
   const [showModal, setShowModal] = useState(false);
   const [showSearch, setShowSearch] = useState(true);
+  const [profileModal, setProfileModal] = useState(false);  
 
   // force render hooks
   const [channelCreated, setChannelCreated] = useState(false);
@@ -49,7 +51,7 @@ export default function MainPage(props){
   function onAuthStateChange(){
         return  auth.onAuthStateChanged(cred=>{ 
         // Initialization
-        channels.once('value', snap=>{
+        if(cred){channels.once('value', snap=>{
           completeChannelsList.current = snap.val();
           let userSpecificChannels = Object.entries(snap.val()).filter(channel=> {
             let x = Object.values(channel[1].users);
@@ -58,7 +60,7 @@ export default function MainPage(props){
           userSpecificChannels = Object.fromEntries(userSpecificChannels);
           if (!channelsList) setChannelsList(userSpecificChannels); 
           if (!currentChannel) setcurrentChannel(['0', {name: 'general'}]);
-        })
+        })}
 
         // redirect when user is not signed in
         if (cred) setUser(cred.email)
@@ -90,7 +92,7 @@ export default function MainPage(props){
     channelsDrawerHeader.current.classList.remove('burger-drawer__header--visible');
     setcurrentChannel(channel)
   }
-  const signOut = () => auth.signOut();
+
   const createRoom = (e) => {
     e.preventDefault();
     const {name, password} = e.target;
@@ -98,7 +100,7 @@ export default function MainPage(props){
       name: `${name.value}`,
       password:`${password.value}`,
       users: [user],
-      messages: [{message: 'Hello, welcome to the new chatroom!', sender: 'default'}]
+      messages: [{message: 'Hello, welcome to the new chatroom!', sender: 'BasedChatBot'}]
     });
     e.target.reset();
     setShowModal(false);
@@ -112,6 +114,8 @@ export default function MainPage(props){
 
   const toggleSearchOrFind = () => setShowSearch(!showSearch)
   const showModalForm = () => setShowModal(!showModal);
+  const signOut = () => auth.signOut();
+  const showProfileModal = () => setProfileModal(!profileModal);
   
   return(<>
     <div className="main-page">
@@ -122,8 +126,9 @@ export default function MainPage(props){
               ? <Modal hideModal={showModalForm}><SearchChannels channelsList={completeChannelsList.current} user={user} handler={toggleSearchOrFind} addUserToChannel={addUserToChannel} /> </Modal> 
               : <Modal hideModal={showModalForm}><ModalForm createRoom={createRoom} handler={toggleSearchOrFind}/> </Modal> 
             : <></>}
+            {profileModal ? (<Modal hideModal={showProfileModal}><ModalProfile hideModal={showProfileModal} /></Modal>): <></>}
           <BurgerDrawer showModal={showModalForm} channelsList={channelsList} enterRoom={enterRoom} ref={{channelsDrawer, channelsDrawerHeader, chatroom}} />
-          <Chatroom ref={chatroom} user={user} channel={currentChannel} displayChannels={displayChannels}/>
+          <Chatroom ref={chatroom} user={user} channel={currentChannel} displayChannels={displayChannels} editProfile={showProfileModal} signOut={signOut} />
         </>)
         : <h1>LOADING...</h1>
       }
