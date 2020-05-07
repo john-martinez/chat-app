@@ -13,7 +13,6 @@ const Chatroom = React.forwardRef(({ user, channel, displayChannels},ref) => {
   const [msgs, setMsgs] = useState([]);
   const [text, setText] = useState('');
   const messages = firebase.database().ref('channels/' + channel[0]).child('messages');
-
   useEffect(()=>{
     // initial message load
     const msgsList = [];
@@ -82,6 +81,11 @@ const Chatroom = React.forwardRef(({ user, channel, displayChannels},ref) => {
   }
 
   const renderMessage = () => {
+    let currUser = firebase.auth().currentUser;
+    let { photoURL, displayName } = currUser;
+    const userHasPhoto = currUser && currUser.photoURL;
+    const userHasDisplayName = currUser && currUser.displayName; 
+    console.log(currUser && currUser.photoURL);
     return msgs.length && 
     msgs.map((val,index) => {
       const previousMessage = msgs[index-1];
@@ -107,13 +111,23 @@ const Chatroom = React.forwardRef(({ user, channel, displayChannels},ref) => {
         return (
           <div className={`chat-room__message ${isSameUser ? 'chat-room__message--margin-bottom' : ''}`} key={index}>
             <div className="chat-room__message--left">
-              <span className="chat-room__message-pic">
-                <FontAwesomeIcon icon={faUserCircle} />
-              </span>
+              { userHasPhoto
+                ? <div className="chat-room__message-pic">
+                    <img src={photoURL} alt="user picture"/>
+                  </div>
+
+                : <span className="chat-room__message-pic-icon">
+                    <FontAwesomeIcon icon={faUserCircle} />
+                  </span>
+              }         
             </div>
             <div className="chat-room__message--right">
               <div className="chat-room__message-header">
-                <span className="chat-room__message-sender">{val.sender.split('@')[0]} </span>
+                <span className="chat-room__message-sender">
+                  { userHasDisplayName 
+                    ? displayName
+                    : val.sender.split('@')[0]
+                  } </span>
                 <span className="chat-room__message-timestamp chat-room__message-timestamp--visible">{retrieveDate(val.timestamp)}</span>
               </div>
               <div className="chat-room__message-blurb">
