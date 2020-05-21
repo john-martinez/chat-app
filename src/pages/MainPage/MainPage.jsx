@@ -29,6 +29,7 @@ export default function MainPage(props){
   // database setup
   const auth = firebase.auth();
   const channels = firebase.database().ref().child('channels');
+  const allUsers = firebase.database().ref('users');
 
   
   useEffect(()=>{ channels.on('value', snap=> completeChannelsList.current = snap.val())})  
@@ -45,6 +46,26 @@ export default function MainPage(props){
       })
     }
   }, [channelCreated, showModal])
+
+  useEffect(()=>{
+    // componentDidMount
+      const unsubscribe = onAuthStateChange();
+      return ()=>{
+        unsubscribe();
+      }
+    }, [])
+
+  useEffect(()=>{
+    if (user){
+      allUsers.once('value', snap=>{
+        let usersList = Object.values(snap.val());
+        if (!usersList.find(email=> email === user)){
+          allUsers.push(user);
+        }
+      })
+      
+    }
+  },[user])
 
   function onAuthStateChange(){
         return  auth.onAuthStateChanged(cred=>{ 
@@ -65,13 +86,6 @@ export default function MainPage(props){
         else props.history.push('/login')
     })
   }
-  useEffect(()=>{
-  // componentDidMount
-    const unsubscribe = onAuthStateChange();
-    return ()=>{
-      unsubscribe();
-    }
-  }, [])
 
   const displayChannels = (hideDrawer = false) => {
     if (!hideDrawer){
